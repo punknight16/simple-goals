@@ -1,0 +1,67 @@
+<html>
+<head>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+</head>
+<body>
+	<div class="container">
+		<h1>Documentation</h1>
+		<h4>0. Overview</h4>
+		<p class="lead">How do I not fail at life?</p>
+
+		<p>This is a question that I ask myself constantly. I have read and will continue to read many books on this topic. I can take the question away from myself, and ask "what differentiates between successful people and failures?" I can also play with the premise of the question, by asking "What is success? Is it money or happiness... and how much for how long?" These are really interesting questions, but at the end of the day, success is a practice not a philosophy. So here I am, putting success into practice by developing software that helps foster success.</p>
+
+		<p>That is the "why" behind this web application. I want to be successful, and I think other people do too. From the few books I have read and anecdotes that I have taken to heart, the "how" of being successful involves prioritizing goals, and then skillfully executing actions in furtherance of those goals. The "what", I am selling is a database of what goals we should be prioritizing, and what actions to take in furtherance of those goals.</p>
+
+		<h4>1. Getting Started</h4>
+		<p class="lead">This is a simple platform for managing your goals</p>
+
+		<p>Start using the application by heading to the login page at "&lt;root&gt;/entry". The current version of the application  has 3 types of users: a <strong>demo</strong> user, a <strong>registered</strong> user, and a <strong>paid</strong> user. You can start as a demo user, and head over to the goals page at "&lt;root&gt;/goals".  If you want to see all of the functionality of the app, you can head over to the index page, located at "&lt;root&gt;/".</p>
+
+		<p>A <strong>demo</strong> user will only be able to use the application for the duration that the page is open. A <strong>registered</strong> user will have data stored in local storage on their own device, and have a few more menu options available to them. A <strong>paid</strong> user will have their data stored in the cloud, so they can access their data from any device, and have access to all menu options and premium content such as reviews of books and research that we have done in this space.</p>
+
+		<p>Once logged in, you can add <strong>goals</strong> to your home page. A goal is an area of your life that you want to improve on. According to the book, "Eat the Frog!" by Brian Tracy, most people have three areas of life that their goals concentrate around:</p> 
+			<ul>
+				<li>Career</li>
+				<li>Relationship</li>
+				<li>Fitness</li>
+			</ul>
+		<p>I encourage you to think of these three areas first because that's where most people start. However, that is only a surface level introspection. After writing down goals in those three areas, consider how they help with:</p>
+		<ul>
+			<li>Managing Stress</li>
+			<li>Experiencing Joy</li>
+		</ul>
+
+		<p>Once you have your goals written out, you should select a few that have the biggest impact on your life. These should be your priority until you have completed them. Warren Buffet has a 5/25 rule for staying focused. Basically, only try to accomplish 5 things in the foreseeable future, and actively avoid the other 20.</p>
+			
+		<h4>2. Release Info</h4>
+		<strong>Version 1.1</strong>
+		<p>Simple html pages were created for the following routes:</p>
+			<ul>
+				<li>/index</li>
+				<li>/registration</li>
+				<li>/login</li>
+				<li>/home</li>
+				<li>/pricing</li>
+				<li>/goals</li>
+				<li>/documentation</li>
+				<li>/logout</li> 
+				<li>/deactivate-account</li>
+			</ul>
+		<p>From the /api route you can further manipulate goals linked to your account through these routes:</p>
+			<ul>
+				<li>/add-goal</li>
+				<li>/search-goal</li>
+				<li>/prioritize-goal</li>
+			</ul>
+		<p>Some of this functionality will be turned on or off depending on the type of user.</p>
+		
+		<h4>3. FAQ</h4>
+		<p><strong>Q:</strong> Trouble Logging in?<br />
+		<strong>A:</strong> Try email: "<em>demo@mail.com</em>" and password: "<em>123</em>".</p>
+		<p><strong>Q:</strong> Why are goals limited to 30 characters?<br />
+		<strong>A:</strong> These are really goal names. Later functionality will include a deeper look into goal descriptions.</p>
+		<h4>4. Bug Tracker</h4>
+		<p>None as of yet!</p>
+	</div>
+<body>
+</html>
