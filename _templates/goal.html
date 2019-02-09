@@ -187,12 +187,12 @@ body {
 
       <div id="wrapper">
       	<div class="p-3 text-white-50 bg-purple rounded-top box-shadow" style="height: 70px">
-          <form class="form-horizontal" action="/action_page.php">
+          <form class="form-horizontal" action="/goals">
             <div class="form-group row" >
               <div class="col-sm-10">
                 <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search" value={{term_str}}>
               </div>
-              
+                
                 <button class="btn btn-success my-2 my-sm-0 mr-sm-2" type="submit">Search</button>
               
               
@@ -218,8 +218,8 @@ body {
                 <td>{{total}}</td>
                 <td class="d-flex justify-content-end border-top-0">
                   <span class="custom-checkbox">
-                    <input type="checkbox" id="checkbox2" name="options[]" value="1" {{checked}}>
-                    <label class="mb-0" for="checkbox2"></label>
+                    <input type="checkbox" onclick='update({{index}})'>
+                    <label class="mb-0" for="check{{index}}"></label>
                   </span>
                 </td>
   					  </tr>
@@ -248,7 +248,13 @@ body {
               </li>
             </ul>
           </nav>
-          <button class="btn btn-primary my-2 my-sm-0 mr-sm-2">Submit</button>
+          <form action='/home' method='post'>
+            {{#Objects}}
+            <input type='hidden' id='check{{index}}' name='check_arr[{{index}}]' value='false' />
+            {{/Objects}}
+            <input type='hidden' name='form_id' value='select-v1.1' />
+            <input class="btn btn-primary my-2 my-sm-0 mr-sm-2" type='submit' value='Save Goal(s)' />
+          </form>
         </div>
 			</div>
     </main>
@@ -280,5 +286,11 @@ body {
         </div>
       </div>
     </div>
+  <script>
+    function update(index){
+      document.getElementById("check"+index).value='true';
+    }
+    /**/
+  </script>
 <body>
 </html>

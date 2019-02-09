@@ -1,6 +1,10 @@
 <html>
 <head>
   <script>{{{cookie_script}}}</script>
+  <meta charset="utf-8">
+  <script src="./build/react.min.js"></script>
+  <script src="./build/react-dom.min.js"></script>
+  <script src="./build/browser.min.js"></script>
   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
@@ -102,6 +106,10 @@ body {
 .icon {
   fill: gray;
 }
+
+.position-table {
+  border-bottom: 2px solid #dee2e6;
+}
 /* Custom checkbox */
   .custom-checkbox {
     position: relative;
@@ -129,17 +137,27 @@ body {
     z-index: 2;
   }
   .custom-checkbox input[type="checkbox"]:checked + label:after {
-    content: '';
     position: absolute;
-    left: 6px;
-    top: 3px;
+    left: 4px;
+    top: 0px;
     width: 6px;
     height: 11px;
-    border: solid #000;
-    border-width: 0 3px 3px 0;
-    transform: inherit;
-    z-index: 3;
-    transform: rotateZ(45deg);
+    color: #FFF;
+  }
+  .custom-checkbox.first input[type="checkbox"]:checked + label:after {
+    content: '1';
+  }
+  .custom-checkbox.second input[type="checkbox"]:checked + label:after {
+    content: '2';
+  }
+  .custom-checkbox.third input[type="checkbox"]:checked + label:after {
+    content: '3';
+  }
+  .custom-checkbox.fourth input[type="checkbox"]:checked + label:after {
+    content: '4';
+  }
+  .custom-checkbox.fifth input[type="checkbox"]:checked + label:after {
+    content: '5';
   }
   .custom-checkbox input[type="checkbox"]:checked + label:before {
     border-color: #007bff;
@@ -154,11 +172,23 @@ body {
     box-shadow: none;
     background: #ddd;
   }
-
+  /*
+   * Footer
+   */
+  .footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    /* Set the fixed height of the footer here */
+    height: 60px;
+    line-height: 60px; /* Vertically center the text there */
+    background-color: #f5f5f5;
+  }
 	</style>
 </head>
 <body>
-	<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+  <div class="cover-container d-flex h-100 p-0 mx-auto flex-column">
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
       <a class="navbar-brand" href="#">Motivation Therapy</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -172,7 +202,8 @@ body {
           </li>
           {{/Items}}
         </ul>
-        <form class="form-inline my-2 my-lg-0" action='/api/search-goal' method='post'>
+        <form class="form-inline my-2 my-lg-0" action='/goals' method='post'>
+          <input type='hidden' name='form_id' value='search-v1.1' />
           <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search" name='term_str'>
           <button class="btn btn-outline-success my-2 my-sm-0 mr-sm-2" type="submit">Search</button>
         </form>
@@ -202,29 +233,31 @@ body {
             >Add Goal</button>
 	        </div>
 	      </div>
-				<table class="table table-striped">
-				  <thead>
-				  	<tr style="border-bottom: 2px solid #dee2e6">
-				    	<th class="border-bottom-0">Goal Name</th>
-              <th class="border-bottom-0"></th>
-              <th class="d-flex justify-content-end border-bottom-0">isPriority</th>
-				  	</tr>
-				  </thead>
-				  <tbody>
-            {{#Objects}}
-  					  <tr class='border-top'>
-  					    <td>{{goal_id}}</td>
-                <td>{{total}}</td>
-                <td class="d-flex justify-content-end border-top-0">
-                  <span class="custom-checkbox">
-                    <input type="checkbox" id="checkbox2" name="options[]" value="1" {{checked}}>
-                    <label class="mb-0" for="checkbox2"></label>
-                  </span>
-                </td>
-  					  </tr>
-					  {{/Objects}}
-					</tbody>
-				</table>
+        <div id='table_body'>
+				  <table class="table table-striped">
+            <thead>
+              <tr style="border-bottom: 2px solid #dee2e6">
+                <th class="border-bottom-0">Goal Name</th>
+                <th class="border-bottom-0"></th>
+                <th class="d-flex justify-content-end border-bottom-0">isPriority</th>
+              </tr>
+            </thead>
+            <tbody >
+              {{#Objects}}
+                <tr class='border-top'>
+                  <td>{{goal_id}}</td>
+                  <td>{{index}}</td>
+                  <td class="d-flex justify-content-end border-top-0">
+                    <span class="custom-checkbox">
+                      <input type="checkbox" id="checkbox2" name="options[]" value="1" {{checked}}>
+                      <label class="mb-0" for="checkbox2"></label>
+                    </span>
+                  </td>
+                </tr>
+              {{/Objects}}
+            </tbody>
+          </table>
+        </div>
         <div class='d-flex justify-content-between'>
           <nav aria-label="Page navigation example">
             <ul class="pagination mb-0">
@@ -247,37 +280,186 @@ body {
               </li>
             </ul>
           </nav>
-          <button class="btn btn-primary my-2 my-sm-0 mr-sm-2">Submit</button>
+          <form action='/home' method='post'>
+            {{#Objects}}
+            <input type='hidden' id='{{index}}' name='{{index}}'  value='100' />
+            {{/Objects}}
+            <input type='hidden' name='form_id' value='prioritize-v1.1' />
+            <input type='submit' id='submit_priority' class="btn btn-primary my-2 my-sm-0 mr-sm-2"
+              value ='Submit Priority' />
+            </form>
         </div>
 			</div>
+
     </main>
 
+   <footer class="footer">
+      <div class="container">
+        <span class="text-muted">{{msg}}</span>
+      </div>
+    </footer>
+  </div>
     <!-- Modal -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Add Goal</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <form action='/api/add-goal' method='post'>
-            <div class="modal-body">
-              <div class="form-group">
-                <label for="goalInput">Goal Input</label>
-                <input type="text" class="form-control" name="goalInput" aria-describedby="goalHelp" placeholder="Enter goal">
-                <input type='hidden' name="form-id" value='add-goal-form-v1.1' />
-                <small id="goalHelp" class="form-text text-muted">Enter a short goal name</small>
-              </div>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-              <button type="submit" class="btn btn-primary">Save Goal</button>
-            </div>
-          </form>
+  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Add Goal</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
         </div>
+        <form action='/api/add-goal' method='post'>
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="goalInput">Goal Input</label>
+              <input type="text" class="form-control" name="goalInput" aria-describedby="goalHelp" placeholder="Enter goal">
+              <input type='hidden' name="form-id" value='add-goal-form-v1.1' />
+              <small id="goalHelp" class="form-text text-muted">Enter a short goal name</small>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Save Goal</button>
+          </div>
+        </form>
       </div>
     </div>
+  </div>
+  <script type='text/babel'>
+    var App = React.createClass({
+      getInitialState: function(){
+        var  check_arr = new Array({{Objects.length}}).fill("{className: 'custom-checkbox', checked: 'false'}")
+        return {check_arr: check_arr}
+      },
+      update: function(num){
+        var check_arr = this.state.check_arr;
+        var index1 = check_arr.findIndex((item)=>{
+          return (item.className == 'custom-checkbox first')
+        });
+        var index2 = check_arr.findIndex((item)=>{
+          return (item.className == 'custom-checkbox second')
+        });
+        var index3 = check_arr.findIndex((item)=>{
+          return (item.className == 'custom-checkbox third')
+        });
+        var index4 = check_arr.findIndex((item)=>{
+          return (item.className == 'custom-checkbox fourth')
+        });
+        var index5 = check_arr.findIndex((item)=>{
+          return (item.className == 'custom-checkbox fifth')
+        });
+        if(!check_arr[num].checked){
+          if(index5 !=-1) {
+            console.log('index5: ', index5);
+            this.state.check_arr.map((item, index)=>{
+              document.getElementById('check'+index).click();  
+            });
+            document.getElementById('check'+num).click();
+            check_arr[num] = {className: 'custom-checkbox first', checked: true};
+            check_arr[index1] = {className: 'custom-checkbox', checked: false};
+            
+            check_arr[index2] = {className: 'custom-checkbox', checked: false};
+            check_arr[index3] = {className: 'custom-checkbox', checked: false};
+            check_arr[index4] = {className: 'custom-checkbox', checked: false};
+            check_arr[index5] = {className: 'custom-checkbox', checked: false};
+          } else if (index4 !=-1) {
+            console.log('index4: ', index4);
+            check_arr[num] = {className: 'custom-checkbox fifth', checked: true};
+          } else if (index3 !=-1) {
+            console.log('index3: ', index4);
+            check_arr[num] = {className: 'custom-checkbox fourth', checked: true};
+          } else if (index2 !=-1) {
+            console.log('index2: ', index2);
+            check_arr[num] = {className: 'custom-checkbox third', checked: true};
+          } else if (index1 !=-1) {
+            console.log('index1: ', index1);
+            check_arr[num] = {className: 'custom-checkbox second', checked: true};
+          } else {
+            console.log('no index: ');
+            check_arr[num] = {className: 'custom-checkbox first', checked: true};
+          }
+        } else {
+          switch(check_arr[num].className){
+            case 'custom-checkbox first':
+              check_arr[index1] = {className: 'custom-checkbox', checked: false};
+              check_arr[index2] = {className: 'custom-checkbox first', checked: true};
+              check_arr[index3] = {className: 'custom-checkbox second', checked: true};
+              check_arr[index4] = {className: 'custom-checkbox third', checked: true};
+              check_arr[index5] = {className: 'custom-checkbox fourth', checked: true};
+              break;
+            case 'custom-checkbox second':
+              check_arr[index2] = {className: 'custom-checkbox', checked: false};
+              check_arr[index3] = {className: 'custom-checkbox second', checked: true};
+              check_arr[index4] = {className: 'custom-checkbox third', checked: true};
+              check_arr[index5] = {className: 'custom-checkbox fourth', checked: true};
+              break;
+            case 'custom-checkbox third':
+              check_arr[index3] = {className: 'custom-checkbox', checked: false};
+              check_arr[index4] = {className: 'custom-checkbox third', checked: true};
+              check_arr[index5] = {className: 'custom-checkbox fourth', checked: true};
+              break;
+            case 'custom-checkbox fourth':
+              check_arr[index4] = {className: 'custom-checkbox', checked: false};
+              check_arr[index5] = {className: 'custom-checkbox fourth', checked: true};
+              break;
+          } 
+        }
+        setHiddenForm(check_arr);
+        this.setState({check_arr: check_arr});
+      },
+      render: function(){
+        return (
+          <table className="table table-striped position-table">
+            <thead>
+              <tr>
+                <th className="border-bottom-0">Goal Name</th>
+                <th className="border-bottom-0"></th>
+                <th className="d-flex justify-content-end border-bottom-0">Priority</th>
+              </tr>
+            </thead>
+            <tbody >
+              {{#Objects}}
+                <tr className='border-top'>
+                  <td>{{goal_id}}</td>
+                  <td>{{index}}</td>
+                  <td className="d-flex justify-content-end border-top-0">
+                    <span className={this.state.check_arr[{{index}}].className || 'custom-checkbox'}>
+                      <input id='check{{index}}' type="checkbox" onClick={(e)=>this.update({{index}})}/>
+                      <label className="mb-0"></label>
+                    </span>
+                  </td>
+                </tr>
+              {{/Objects}}
+            </tbody>
+          </table>
+        );  
+      }
+    });
+    ReactDOM.render(<App />, document.getElementById('table_body'));
+  </script>
+  <script>
+    function setHiddenForm(check_arr){
+      check_arr.map((item, index)=>{
+        switch(item.className){
+          case 'custom-checkbox first':
+            document.getElementById(index).value = 1;
+            break;
+          case 'custom-checkbox second':
+            document.getElementById(index).value = 2;
+            break; 
+          case 'custom-checkbox third':
+            document.getElementById(index).value = 3;
+            break;
+          case 'custom-checkbox fourth':
+            document.getElementById(index).value = 4;
+            break;
+          case 'custom-checkbox fifth':
+            document.getElementById(index).value = 5;
+            break;
+        }
+      });
+    }
+  </script>
 <body>
 </html>

@@ -18,7 +18,13 @@ function loginInteractor(data, config, args, ext, cb){
 		if(typeof menu_id == 'undefined') return cb('couldn\'t get menu_id');
 		var menu_obj = ext.getMenuObj(data.menu_data, menu_id, ext.getObj);
 		if(typeof menu_obj == 'undefined' || !menu_obj.hasOwnProperty('menu_items')) return cb('couldn\'t get menu_items');
-		return cb(null, token_obj, menu_obj.menu_items);
+		var link_arr = ext.checkoutLinkObj(data.link_data, cred_id, ext.checkoutObj);
+		config.checkout_cache.cred_id = link_arr;
+		return cb(null, {
+			token_obj: token_obj, 
+			menu_items: menu_obj.menu_items,
+			link_arr: link_arr.map((item, index)=>{item.index=index; return item})
+		});
 	});
 }
 

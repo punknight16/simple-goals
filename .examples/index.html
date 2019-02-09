@@ -1,0 +1,187 @@
+<html>
+<head>
+	<meta charset="utf-8">
+	<script src="./build/react.min.js"></script>
+	<script src="./build/react-dom.min.js"></script>
+	<script src="./build/browser.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+  <style>
+    /* Custom checkbox */
+  .custom-checkbox {
+    position: relative;
+  }
+  .custom-checkbox input[type="checkbox"] {    
+    opacity: 0;
+    position: absolute;
+    margin: 5px 0 0 3px;
+    z-index: 9;
+    cursor: pointer;
+  }
+  .custom-checkbox label:before{
+    width: 18px;
+    height: 18px;
+  }
+  .custom-checkbox label:before {
+    content: '';
+    margin-right: 10px;
+    display: inline-block;
+    vertical-align: text-top;
+    background: white;
+    border: 1px solid #bbb;
+    border-radius: 2px;
+    box-sizing: border-box;
+    z-index: 2;
+  }
+  .custom-checkbox input[type="checkbox"]:checked + label:after {
+    position: absolute;
+    left: 4px;
+    top: -3px;
+    width: 6px;
+    height: 11px;
+    color: #FFF;
+  }
+  .custom-checkbox.first input[type="checkbox"]:checked + label:after {
+    content: '1';
+  }
+  .custom-checkbox.second input[type="checkbox"]:checked + label:after {
+    content: '2';
+  }
+  .custom-checkbox.third input[type="checkbox"]:checked + label:after {
+    content: '3';
+  }
+  .custom-checkbox.fourth input[type="checkbox"]:checked + label:after {
+    content: '4';
+  }
+  .custom-checkbox.fifth input[type="checkbox"]:checked + label:after {
+    content: '5';
+  }
+  .custom-checkbox input[type="checkbox"]:checked + label:before {
+    border-color: #007bff;
+    background: #007bff;
+  }
+  .custom-checkbox input[type="checkbox"]:checked + label:after {
+    border-color: #fff;
+  }
+  .custom-checkbox input[type="checkbox"]:disabled + label:before {
+    color: #b8b8b8;
+    cursor: auto;
+    box-shadow: none;
+    background: #ddd;
+  }
+  </style>
+</head>
+<body>
+	<main id='container'>
+    <span className="custom-checkbox">
+      <input type="checkbox" id="checkbox2" name="options[]" value="1" checked>
+      <label className="mb-0" for="checkbox2"></label>
+    </span>
+    
+    <input type='submit' />
+  </main>
+	<script type='text/babel'>
+		var App = React.createClass({
+			getInitialState: function(){
+        return {check_arr: [
+          {className: 'custom-checkbox', checked: false}, 
+          {className: 'custom-checkbox', checked: false},
+          {className: 'custom-checkbox', checked: false},
+          {className: 'custom-checkbox', checked: false},
+          {className: 'custom-checkbox', checked: false}
+        ]}
+      },
+      update: function(num){
+        var check_arr = this.state.check_arr;
+        var index1 = check_arr.findIndex((item)=>{
+          return (item.className == 'custom-checkbox first')
+        });
+        var index2 = check_arr.findIndex((item)=>{
+          return (item.className == 'custom-checkbox second')
+        });
+        var index3 = check_arr.findIndex((item)=>{
+          return (item.className == 'custom-checkbox third')
+        });
+        var index4 = check_arr.findIndex((item)=>{
+          return (item.className == 'custom-checkbox fourth')
+        });
+        var index5 = check_arr.findIndex((item)=>{
+          return (item.className == 'custom-checkbox fifth')
+        });
+        if(!check_arr[num].checked){
+          check_arr[num] = {className: 'custom-checkbox first', checked: true};
+          check_arr[index1] = {className: 'custom-checkbox second', checked: true};
+          check_arr[index2] = {className: 'custom-checkbox third', checked: true};
+          check_arr[index3] = {className: 'custom-checkbox fourth', checked: true};
+          check_arr[index4] = {className: 'custom-checkbox fifth', checked: true};
+        } else {
+          switch(check_arr[num].className){
+            case 'custom-checkbox first':
+              check_arr[index1] = {className: 'custom-checkbox', checked: false};
+              check_arr[index2] = {className: 'custom-checkbox first', checked: true};
+              check_arr[index3] = {className: 'custom-checkbox second', checked: true};
+              check_arr[index4] = {className: 'custom-checkbox third', checked: true};
+              check_arr[index5] = {className: 'custom-checkbox fourth', checked: true};
+              break;
+            case 'custom-checkbox second':
+              check_arr[index2] = {className: 'custom-checkbox', checked: false};
+              check_arr[index3] = {className: 'custom-checkbox second', checked: true};
+              check_arr[index4] = {className: 'custom-checkbox third', checked: true};
+              check_arr[index5] = {className: 'custom-checkbox fourth', checked: true};
+              break;
+            case 'custom-checkbox third':
+              check_arr[index3] = {className: 'custom-checkbox', checked: false};
+              check_arr[index4] = {className: 'custom-checkbox third', checked: true};
+              check_arr[index5] = {className: 'custom-checkbox fourth', checked: true};
+              break;
+            case 'custom-checkbox fourth':
+              check_arr[index4] = {className: 'custom-checkbox', checked: false};
+              check_arr[index5] = {className: 'custom-checkbox fourth', checked: true};
+              break;
+          } 
+        }
+        this.setState({check_arr: check_arr});
+      },
+      render: function(){
+				return (
+          <tr className='border-top'>
+  					<td className="d-flex justify-content-end border-top-0">
+              <span className={this.state.check_arr[0].className}>
+                <input type="checkbox" name="options[]" value="1" onClick={(e)=>this.update(0)}/>
+                <label className="mb-0" for="checkbox2"></label>
+              </span>
+            </td>
+            <td className="d-flex justify-content-end border-top-0">
+              <span className={this.state.check_arr[1].className} >
+                <input type="checkbox" name="options[]" value="1" onClick={(e)=>this.update(1)} />
+                <label className="mb-0" for="checkbox2"></label>
+              </span>
+            </td>
+            <td className="d-flex justify-content-end border-top-0">
+              <span className={this.state.check_arr[2].className} >
+                <input type="checkbox" name="options[]" value="1" onClick={(e)=>this.update(2)} />
+                <label className="mb-0" for="checkbox2"></label>
+              </span>
+            </td>
+            <td className="d-flex justify-content-end border-top-0">
+              <span className={this.state.check_arr[3].className} >
+                <input type="checkbox" name="options[]" value="1" onClick={(e)=>this.update(3)} />
+                <label className="mb-0" for="checkbox2"></label>
+              </span>
+            </td>
+            <td className="d-flex justify-content-end border-top-0">
+              <span className={this.state.check_arr[4].className} >
+                <input type="checkbox" name="options[]" value="1" onClick={(e)=>this.update(4)} />
+                <label className="mb-0" for="checkbox2"></label>
+              </span>
+            </td>
+          </tr>
+				);	
+			}
+		});
+		ReactDOM.render(<App />, document.getElementById('container'));
+	</script>
+</body>
+</html>

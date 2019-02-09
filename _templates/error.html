@@ -11,7 +11,7 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 
-    <title>Cover Template for Bootstrap</title>
+    <title>Error: {{msg}}</title>
 
     
     <style>
@@ -134,10 +134,10 @@ body {
       <header class="masthead mb-auto">
         <div class="inner">
           <h3 class="masthead-brand">Motivation Therapy</h3>
-          <nav class="nav nav-masthead justify-content-center">
-            <a class="nav-link active" href="#">Home</a>
-            <a class="nav-link" href="#">Goals</a>
-            <a class="nav-link" href="#">Pricing</a>
+          <nav class="nav nav-masthead">
+            <a class="nav-link" href="/login">Login</a>
+            <a class="nav-link" href="/register">Register</a>
+            <a class="nav-link" href="/documentation">Help</a>
           </nav>
         </div>
       </header>
@@ -146,15 +146,20 @@ body {
         <h1 class="cover-heading">Something went wrong</h1>
         <p class="lead">Don't worry, just click the back button.</p>
         <p class="lead">
-          <a href="/documentation" class="btn btn-lg btn-secondary">Learn more</a>
+          <button class="btn btn-lg btn-secondary" onclick="goBack()">Go Back</button>
         </p>
       </main>
 
       <footer class="mastfoot mt-auto">
         <div class="inner">
-          <p>Bootstrap is awesome! <a href="https://getbootstrap.com/">Checkout Bootstrap</a></p>
+          <p>{{msg}}</p>
         </div>
       </footer>
     </div>
+<script>
+function goBack() {
+  window.history.back();
+}
+</script>
   </body>
 </html>

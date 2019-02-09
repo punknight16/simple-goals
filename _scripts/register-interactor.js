@@ -25,7 +25,11 @@ function registerInteractor(data, config, args, ext, cb){
 	args.resource_id = 'r-mt/menu'; 
 	args.universal_id = 'menu-1';
 	err = ext.addPermissionObj(data, config, args, ext);
-	if(err) return cb('failed to add menupermission_obj');
+	if(err) return cb('failed to add menu permission_obj');
+	args.resource_id = 'r-mt/list-goal-obj'; 
+	args.universal_id = 'public';
+	err = ext.addPermissionObj(data, config, args, ext);
+	if(err) return cb('failed to add list-goal permission_obj');
 	err = ext.addEngagementObj(data, config, args, ext);
 	if(err) return cb('failed to add engagement');
 	var token_obj = ext.addTokenObj(data, config, args, ext);
@@ -34,7 +38,10 @@ function registerInteractor(data, config, args, ext, cb){
 	if(typeof menu_id == 'undefined') return cb('couldn\'t get menu_id');
 	var menu_obj = ext.getMenuObj(data.menu_data, menu_id, ext.getObj);
 	if(typeof menu_obj == 'undefined' || !menu_obj.hasOwnProperty('menu_items')) return cb('couldn\'t get menu_items');
-	return cb(null, token_obj, menu_obj.menu_items);
+	return cb(null, {
+		token_obj: token_obj, 
+		menu_items: menu_obj.menu_items
+	});
 }
 
 module.exports = registerInteractor;
