@@ -10,11 +10,11 @@ function checkoutObj(data, params_obj){
 		});
 		return filtered_arr
 	}, data);
-	
+	/*
 	for (var i = ans_arr.length - 1; i >= 0; i--) {
 		data.splice(ans_arr[i].index, 1);
 	};
-		
+	*/
 
 
 	if(typeof ans_arr=='undefined'){

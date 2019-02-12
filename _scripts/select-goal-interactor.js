@@ -1,12 +1,27 @@
-function getHomeInteractor(data, config, args, ext, cb){
+function selectGoalInteractor(data, config, args, ext, cb){
+	var err;
+	args.engagement_id = ext.generateId(data.universal_data, 'engagement-', 10);
+	if(typeof args.engagement_id == 'undefined') return cb('no engagement_id');
 	ext.authorizeRequest(data, config, args, ext, function(err, cred_id){
 		if(err) return cb(err);
 		args.cred_id = cred_id;
 		var menu_id = ext.getMenuIdFromPermission(data.permission_data, cred_id, ext.getPermissionObj, ext.getObj);
+		
 		if(typeof menu_id == 'undefined') return cb('couldn\'t get menu_id');
 		var menu_obj = ext.getMenuObj(data.menu_data, menu_id, ext.getObj);
 		if(typeof menu_obj == 'undefined' || !menu_obj.hasOwnProperty('menu_items')) return cb('couldn\'t get menu_items');
-		var link_arr = ext.checkoutLinkObj(data.link_data, cred_id, ext.checkoutObj);
+		
+		args.link_arr.map((link_obj)=>{
+			if(link_obj.isSelected=='true'){
+				var index = config.client_cache[cred_id].goal_arr.findIndex((item)=>{return (item.index==link_obj.index)})
+				if(index!=-1){
+					args.goal_id = config.client_cache[cred_id].goal_arr[index].goal_id;
+					ext.addLinkObj(data, config, args, ext);			
+				}
+			}
+		});
+		
+		var link_arr = ext.checkoutLinkObj(data.link_data, cred_id, ext.checkoutObj)
 		if(typeof args.link_cursor == 'undefined'){
 			args.link_cursor = 1;	
 		}
@@ -22,4 +37,4 @@ function getHomeInteractor(data, config, args, ext, cb){
 	});
 }
 
-module.exports = getHomeInteractor;
+module.exports = selectGoalInteractor;

@@ -7,6 +7,9 @@ function searchGoalInteractor(data, config, args, ext, cb){
 		var goal_arr = ext.joinTagAndGoal(data, config, args, ext);
 		if(typeof goal_arr == 'undefined') return cb('couldn\'t join tag_data with goal_data');
 		var menu_id = ext.getMenuIdFromPermission(data.permission_data, cred_id, ext.getPermissionObj, ext.getObj);
+		if(menu_id=='menu-0') menu_id='menu-3';
+		if(menu_id=='menu-1') menu_id='menu-4';
+		if(menu_id=='menu-2') menu_id='menu-5';
 		if(typeof menu_id == 'undefined') return cb('couldn\'t get menu_id');
 		var menu_obj = ext.getMenuObj(data.menu_data, menu_id, ext.getObj);
 		if(typeof menu_obj == 'undefined' || !menu_obj.hasOwnProperty('menu_items')) return cb('couldn\'t get menu_items');

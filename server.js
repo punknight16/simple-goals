@@ -3,16 +3,17 @@ var fs = require('fs');
 var mu = require("mu2-updated"); //mustache template engine
 
 
-receivePostData = require('./_models/receive-post-data');
-receiveCookieData = require('./_models/receive-cookie-data');
-registerInteractor = require('./_scripts/register-interactor');
-loginInteractor = require('./_scripts/login-interactor');
-getHomeInteractor = require('./_scripts/get-home-interactor');
-addSaleInteractor = require('./_scripts/add-sale-interactor');
-searchGoalInteractor = require('./_scripts/search-goal-interactor');
-addGoalInteractor = require('./_scripts/add-goal-interactor');
-prioritizeInteractor = require('./_scripts/prioritize-interactor');
-listGoalInteractor = require('./_scripts/list-goal-interactor');
+var receivePostData = require('./_models/receive-post-data');
+var receiveCookieData = require('./_models/receive-cookie-data');
+var registerInteractor = require('./_scripts/register-interactor');
+var loginInteractor = require('./_scripts/login-interactor');
+var getHomeInteractor = require('./_scripts/get-home-interactor');
+var addSaleInteractor = require('./_scripts/add-sale-interactor');
+var searchGoalInteractor = require('./_scripts/search-goal-interactor');
+var addGoalInteractor = require('./_scripts/add-goal-interactor');
+var prioritizeInteractor = require('./_scripts/prioritize-interactor');
+var listGoalInteractor = require('./_scripts/list-goal-interactor');
+var selectGoalInteractor = require('./_scripts/select-goal-interactor');
 
 var error = function(res, err_msg){
 	console.log(JSON.stringify(err_msg));
@@ -47,7 +48,8 @@ var data = {
 		{cred_id: 'cred-0vndq7krkn6o', resource_id:'r-mt/menu', universal_id: 'menu-2'},
 		{cred_id: 'cred-0vndq7krkn6o', resource_id:'r-mt/get-home', universal_id: 'cred-0vndq7krkn6o'},
 		{cred_id: 'cred-0vndq7krkn6o', resource_id:'r-mt/priortize-home', universal_id: 'cred-0vndq7krkn6o'},
-		{cred_id: 'cred-0vndq7krkn6o', resource_id:'r-mt/search-goal', universal_id: 'cred-0vndq7krkn6o'}
+		{cred_id: 'cred-0vndq7krkn6o', resource_id:'r-mt/search-goal', universal_id: 'cred-0vndq7krkn6o'},
+		{cred_id: 'cred-0vndq7krkn6o', resource_id:'r-mt/list-goal-obj', universal_id: 'public'}
 	],
 	engagement_data: [],
 	goal_data: [
@@ -96,6 +98,21 @@ var data = {
 		{menu_id: 'menu-2', menu_items: [
 			{link: '/home', value: 'Home', active: 'active', sr: '<span class="sr-only">(current)</span>'},
 			{link: '/goals', value: 'Goals'},
+			{link: '/register', value: 'Register Today!'},
+		]},
+		{menu_id: 'menu-3', menu_items: [
+			{link: '/home', value: 'Home'},
+			{link: '/goals', value: 'Goals', active: 'active', sr: '<span class="sr-only">(current)</span>'},
+			{link: '/review', value: 'Write A Review!'}
+		]},
+		{menu_id: 'menu-4', menu_items: [
+			{link: '/home', value: 'Home'},
+			{link: '/goals', value: 'Goals', active: 'active', sr: '<span class="sr-only">(current)</span>'},
+			{link: '/pricing', value: 'Upgrade Now!'}
+		]},
+		{menu_id: 'menu-5', menu_items: [
+			{link: '/home', value: 'Home'},
+			{link: '/goals', value: 'Goals', active: 'active', sr: '<span class="sr-only">(current)</span>'},
 			{link: '/register', value: 'Register Today!'}
 		]}
 	],
@@ -106,7 +123,8 @@ var config = {
 	token_secret: 'other_secret',
 	last_engagement_arr: [],
 	token_arr: [],
-	checkout_cache: {}
+	checkout_cache: {},
+	client_cache: {}
 };
 var ext = {};
 ext.generateId = require('./_models/generate-id');
@@ -139,6 +157,7 @@ ext.editObj = require('./_models/edit-obj');
 ext.editLinkObj = require('./_scripts/edit-link-obj');
 ext.listGoalObj = require('./_scripts/list-goal-obj');
 ext.listObj = require('./_models/list-obj');
+
 
 var server = http.createServer(function(req, res){
 	var path_params = req.url.split('/');
@@ -181,10 +200,23 @@ var server = http.createServer(function(req, res){
 					if(err) return error(res, err);
 					if(!cookie_obj.hasOwnProperty('token_id')) return error(res, 'missing auth params');
 					if(!cookie_obj.hasOwnProperty('public_token')) return error(res, 'missing auth params');
-					var args = Object.assign(cookie_obj, {query_string: path[1]}, { resource_id: 'r-mt/list-goal-obj', universal_id: 'public' });
+					if(typeof path[1] == 'undefined'){
+						path[1] = 'cursor=1';
+					};
+					var args = Object.assign(cookie_obj, {goal_cursor: path[1].split('=')[1]}, { resource_id: 'r-mt/list-goal-obj', universal_id: 'public' });
 					listGoalInteractor(data, config, args, ext, function(err, confirm_args){
 						if(err) return error(res, err);
 						confirm_args.Items = confirm_args.menu_items;
+						confirm_args.page_arr = new Array(confirm_args.goal_pages).fill({a:1}).map((item, index)=>{ 
+							item = {};
+							item.active = '';
+							if((confirm_args.goal_cursor-1)==index){
+								item.active = 'active'
+							}
+							item.index = index+1;
+							return item;
+						});
+						
 						swapIdForName(data.name_data, confirm_args.goal_arr, function(err, swapped_data){
 							confirm_args.Objects = swapped_data;
 							displayTemplate(res, '', 'goal.html', confirm_args);
@@ -199,11 +231,24 @@ var server = http.createServer(function(req, res){
 							if(err) return error(res, err);
 							if(!cookie_obj.hasOwnProperty('token_id')) return error(res, 'missing auth params');
 							if(!cookie_obj.hasOwnProperty('public_token')) return error(res, 'missing auth params');
-							var args = Object.assign(post_obj, cookie_obj, { resource_id: 'r-mt/search-goal' });
+							var args = Object.assign(post_obj, cookie_obj, { resource_id: 'r-mt/search-goal', universal_id: 'public'});
 							searchGoalInteractor(data, config, args, ext, function(err, confirm_args){
 								if(err) return error(res, err);
-								if(typeof menu_items == 'undefined') return error(res, 'session expired');
-								displayTemplate(res, 'found goals', 'goal.html', confirm_args);
+								confirm_args.Items = confirm_args.menu_items;
+								confirm_args.page_arr = new Array(confirm_args.goal_pages).fill({a:1}).map((item, index)=>{ 
+									item = {};
+									item.active = '';
+									if((confirm_args.goal_cursor-1)==index){
+										item.active = 'active'
+									}
+									item.index = index+1;
+									return item;
+								});
+								console.log('confirm_args for search: ', confirm_args);
+								swapIdForName(data.name_data, confirm_args.goal_arr, function(err, swapped_data){
+									confirm_args.Objects = swapped_data;
+									displayTemplate(res, 'Found goals', 'goal.html', confirm_args);
+								});
 							});
 						})
 					});
@@ -217,9 +262,24 @@ var server = http.createServer(function(req, res){
 					if(!cookie_obj.hasOwnProperty('token_id')) return error(res, 'missing auth params');
 					if(!cookie_obj.hasOwnProperty('public_token')) return error(res, 'missing auth params');
 					var args = Object.assign(cookie_obj, { resource_id: 'r-mt/get-home' });
-					getHomeInteractor(data, config, args, ext, function(err, menu_items){
-						if(typeof menu_items == 'undefined') return error(res, 'session expired');
-						displayTemplate(res, cookie_obj, 'home.html', menu_items);
+					getHomeInteractor(data, config, args, ext, function(err, confirm_args){
+						if(err) return error(res, err);
+						confirm_args.Items = confirm_args.menu_items;
+						confirm_args.page_arr = new Array(confirm_args.link_pages).fill({a:1}).map((item, index)=>{ 
+							item = {};
+							item.active = '';
+							if((confirm_args.link_cursor-1)==index){
+								item.active = 'active'
+							}
+							item.index = index+1;
+							return item;
+						});
+						console.log('confirm_args for getHomeInteractor: ', confirm_args);
+						var sorted_links = confirm_args.link_arr.sort((a, b)=>{return a.priority-b.priority});
+						swapIdForName(data.name_data, sorted_links, function(err, swapped_data){
+							confirm_args.Objects = swapped_data;
+							displayTemplate(res, '', 'home.html', confirm_args);
+						});
 					});
 				});
 			} else {
@@ -229,17 +289,27 @@ var server = http.createServer(function(req, res){
 						case 'login-v1.1':
 							if(!post_obj.hasOwnProperty('email') ||
 								!post_obj.hasOwnProperty('password')) return error(res, 'missing login params');
-							loginInteractor(data, config, post_obj, ext, function(err, args){
+							loginInteractor(data, config, post_obj, ext, function(err, confirm_args){
 								if(err) return error(res, err);
 								//
-								var token_str = args.token_obj.token_id+'.'+args.token_obj.public_token+'.'+args.token_obj.cred_id;
-								args.cookie_script = 'document.cookie = "token='+token_str+'; path=/";';
-								args.Items = args.menu_items;
-								var sorted_links = args.link_arr.sort((a, b)=>{return a.priority-b.priority});
-								swapIdForName(data.name_data, sorted_links, function(err, swapped_data){
-									args.Objects = swapped_data;
-									displayTemplate(res, 'Login Successful', 'home.html', args);
-								});
+								var token_str = confirm_args.token_obj.token_id+'.'+confirm_args.token_obj.public_token+'.'+confirm_args.token_obj.cred_id;
+								confirm_args.cookie_script = 'document.cookie = "token='+token_str+'; path=/";';
+								confirm_args.Items = confirm_args.menu_items;
+								confirm_args.page_arr = new Array(confirm_args.link_pages).fill({a:1}).map((item, index)=>{ 
+										item = {};
+										item.active = '';
+										if((confirm_args.link_cursor-1)==index){
+											item.active = 'active'
+										}
+										item.index = index+1;
+										return item;
+									});
+									
+									var sorted_links = confirm_args.link_arr.sort((a, b)=>{return a.priority-b.priority});
+									swapIdForName(data.name_data, sorted_links, function(err, swapped_data){
+										confirm_args.Objects = swapped_data;
+										displayTemplate(res, 'Login Successful', 'home.html', confirm_args);
+									});
 							});
 							break;
 						case 'prioritize-v1.1':
@@ -260,11 +330,22 @@ var server = http.createServer(function(req, res){
 								prioritizeInteractor(data, config, args, ext, function(err, confirm_args){
 									if(err) return error(res, err);
 									//console.log(confirm_args.link_arr);
-									args.cookie_script = '';
-									args.Items = confirm_args.menu_items;
-									swapIdForName(data.name_data, confirm_args.link_arr, function(err, swapped_data){
-										args.Objects = swapped_data;
-										displayTemplate(res, 'Prioritize Successful', 'home.html', args);
+									confirm_args.cookie_script = '';
+									confirm_args.Items = confirm_args.menu_items;
+									confirm_args.page_arr = new Array(confirm_args.link_pages).fill({a:1}).map((item, index)=>{ 
+										item = {};
+										item.active = '';
+										if((confirm_args.link_cursor-1)==index){
+											item.active = 'active'
+										}
+										item.index = index+1;
+										return item;
+									});
+									
+									var sorted_links = confirm_args.link_arr.sort((a, b)=>{return a.priority-b.priority});
+									swapIdForName(data.name_data, sorted_links, function(err, swapped_data){
+										confirm_args.Objects = swapped_data;
+										displayTemplate(res, 'Prioritized Goals', 'home.html', confirm_args);
 									});
 								});
 							});
@@ -288,27 +369,36 @@ var server = http.createServer(function(req, res){
 							var link_arr = [];
 							keys.map((item, index)=>{
 								if(keys[index]!='form_id' && typeof keys[index] != 'undefined'){
-									link_arr.push({goal_id: keys[index], priority: values[index]});
+									link_arr.push({index: keys[index], isSelected: values[index]});
 								} 
 							});
-							console.log('link_arr: ', link_arr);
+							
 							receiveCookieData(req, function(err, cookie_obj){
 								if(err) return error(res, err);
 								if(!cookie_obj.hasOwnProperty('token_id')) return error(res, 'missing auth params');
 								if(!cookie_obj.hasOwnProperty('public_token')) return error(res, 'missing auth params');
-								var args = Object.assign(post_obj, cookie_obj,{resource_id: 'r-mt/priortize-home', link_arr: link_arr});
-								res.end('we got this far');
-								/*
-								prioritizeInteractor(data, config, args, ext, function(err, confirm_args){
+								var args = Object.assign(post_obj, cookie_obj,{resource_id: 'r-mt/select-home', link_arr: link_arr});
+								selectGoalInteractor(data, config, args, ext, function(err, confirm_args){
 									if(err) return error(res, err);
-									//console.log(confirm_args.link_arr);
-									args.cookie_script = '';
-									args.Items = confirm_args.menu_items;
-									swapIdForName(data.name_data, confirm_args.link_arr, function(err, swapped_data){
-										args.Objects = swapped_data;
-										displayTemplate(res, 'Prioritize Successful', 'home.html', args);
+									console.log("confirm_args.link_arr: ", confirm_args.link_arr);
+									confirm_args.cookie_script = '';
+									confirm_args.Items = confirm_args.menu_items;
+									confirm_args.page_arr = new Array(confirm_args.link_pages).fill({a:1}).map((item, index)=>{ 
+										item = {};
+										item.active = '';
+										if((confirm_args.link_cursor-1)==index){
+											item.active = 'active'
+										}
+										item.index = index+1;
+										return item;
 									});
-								});*/
+									console.log('confirm_args for selectGoalsInteractor: ', confirm_args);
+									var sorted_links = confirm_args.link_arr.sort((a, b)=>{return a.priority-b.priority});
+									swapIdForName(data.name_data, sorted_links, function(err, swapped_data){
+										confirm_args.Objects = swapped_data;
+										displayTemplate(res, 'Selected Goals added', 'home.html', confirm_args);
+									});
+								});
 							});
 							break;
 						default:
