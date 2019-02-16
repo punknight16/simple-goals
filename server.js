@@ -2,7 +2,7 @@ var http = require('http');
 var fs = require('fs');
 var mu = require("mu2-updated"); //mustache template engine
 
-
+var promisePostData = require('./_models/promise-post-data');
 var receivePostData = require('./_models/receive-post-data');
 var receiveCookieData = require('./_models/receive-cookie-data');
 var registerInteractor = require('./_scripts/register-interactor');
@@ -87,32 +87,32 @@ var data = {
 	menu_data: [
 		{menu_id: 'menu-0', menu_items: [
 			{link: '/home', value: 'Home', active: 'active', sr: '<span class="sr-only">(current)</span>'},
-			{link: '/goals', value: 'Goals'},
+			{link: '/browse', value: 'Browse'},
 			{link: '/review', value: 'Write A Review!'}
 		]},
 		{menu_id: 'menu-1', menu_items: [
 			{link: '/home', value: 'Home', active: 'active', sr: '<span class="sr-only">(current)</span>'},
-			{link: '/goals', value: 'Goals'},
+			{link: '/browse', value: 'Browse'},
 			{link: '/pricing', value: 'Upgrade Now!'}
 		]},
 		{menu_id: 'menu-2', menu_items: [
 			{link: '/home', value: 'Home', active: 'active', sr: '<span class="sr-only">(current)</span>'},
-			{link: '/goals', value: 'Goals'},
+			{link: '/browse', value: 'Browse'},
 			{link: '/register', value: 'Register Today!'},
 		]},
 		{menu_id: 'menu-3', menu_items: [
 			{link: '/home', value: 'Home'},
-			{link: '/goals', value: 'Goals', active: 'active', sr: '<span class="sr-only">(current)</span>'},
+			{link: '/browse', value: 'Browse', active: 'active', sr: '<span class="sr-only">(current)</span>'},
 			{link: '/review', value: 'Write A Review!'}
 		]},
 		{menu_id: 'menu-4', menu_items: [
 			{link: '/home', value: 'Home'},
-			{link: '/goals', value: 'Goals', active: 'active', sr: '<span class="sr-only">(current)</span>'},
+			{link: '/browse', value: 'Browse', active: 'active', sr: '<span class="sr-only">(current)</span>'},
 			{link: '/pricing', value: 'Upgrade Now!'}
 		]},
 		{menu_id: 'menu-5', menu_items: [
 			{link: '/home', value: 'Home'},
-			{link: '/goals', value: 'Goals', active: 'active', sr: '<span class="sr-only">(current)</span>'},
+			{link: '/browse', value: 'Browse', active: 'active', sr: '<span class="sr-only">(current)</span>'},
 			{link: '/register', value: 'Register Today!'}
 		]}
 	],
@@ -193,7 +193,7 @@ var server = http.createServer(function(req, res){
 		case 'deactivate-account':
 			res.end('deactivate-account');
 			break;
-		case 'goals':
+		case 'browse':
 		  //could be coming from index, home, or goals
 			if(req.method=='GET'){
 				receiveCookieData(req, function(err, cookie_obj){
@@ -380,7 +380,6 @@ var server = http.createServer(function(req, res){
 								var args = Object.assign(post_obj, cookie_obj,{resource_id: 'r-mt/select-home', link_arr: link_arr});
 								selectGoalInteractor(data, config, args, ext, function(err, confirm_args){
 									if(err) return error(res, err);
-									console.log("confirm_args.link_arr: ", confirm_args.link_arr);
 									confirm_args.cookie_script = '';
 									confirm_args.Items = confirm_args.menu_items;
 									confirm_args.page_arr = new Array(confirm_args.link_pages).fill({a:1}).map((item, index)=>{ 
@@ -400,6 +399,40 @@ var server = http.createServer(function(req, res){
 									});
 								});
 							});
+							break;
+						case 'add-goal-v1.1':
+							receiveCookieData(req, function(err, cookie_obj){
+								
+								if(err) return error(res, err);
+								if(!cookie_obj.hasOwnProperty('token_id')) return error(res, 'missing auth params');
+								if(!cookie_obj.hasOwnProperty('public_token')) return error(res, 'missing auth params');
+								var args = Object.assign(post_obj, cookie_obj, { resource_id: 'r-mt/add-goal' });
+								
+								addGoalInteractor(data, config, args, ext, function(err, confirm_args){
+									
+									if(err) return error(res, err);
+								
+									confirm_args.cookie_script = '';
+									confirm_args.Items = confirm_args.menu_items;
+									confirm_args.page_arr = new Array(confirm_args.link_pages).fill({a:1}).map((item, index)=>{ 
+										item = {};
+										item.active = '';
+										if((confirm_args.link_cursor-1)==index){
+											item.active = 'active'
+										}
+										item.index = index+1;
+										return item;
+									});
+							
+									var sorted_links = confirm_args.link_arr.sort((a, b)=>{return a.priority-b.priority});
+									swapIdForName(data.name_data, sorted_links, function(err, swapped_data){
+										confirm_args.Objects = swapped_data;
+										displayTemplate(res, 'Goal added', 'home.html', confirm_args);
+									});
+								});
+							});
+							
+							
 							break;
 						default:
 							error(res, 'can\'t find route to match form_id');

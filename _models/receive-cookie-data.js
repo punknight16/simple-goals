@@ -1,4 +1,5 @@
 function receiveCookieData (req, cb){
+	console.log('im in receiveCookieData');
 	var cookie_str = req.headers.cookie;
 	if(typeof cookie_str == 'undefined') return cb('cookies not set, go login');
 	var slice_index = cookie_str.indexOf('=');

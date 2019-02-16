@@ -189,7 +189,7 @@ body {
 <body>
   <div class="cover-container d-flex h-100 p-0 mx-auto flex-column">
     <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-      <a class="navbar-brand" href="#">Motivation Therapy</a>
+      <a class="navbar-brand" href="/">Motivation Therapy</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>     
@@ -202,7 +202,7 @@ body {
           </li>
           {{/Items}}
         </ul>
-        <form class="form-inline my-2 my-lg-0" action='/goals' method='post'>
+        <form class="form-inline my-2 my-lg-0" action='/browse' method='post'>
           <input type='hidden' name='form_id' value='search-v1.1' />
           <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search" name='term_str'>
           <button class="btn btn-outline-success my-2 my-sm-0 mr-sm-2" type="submit">Search</button>
@@ -231,7 +231,7 @@ body {
       	<div class="d-flex align-items-center p-3 text-white-50 bg-purple rounded-top box-shadow">
 	        
 	        <div class="lh-100">
-	          <h6 class="mb-0 text-white lh-100">Goals</h6>
+	          <h6 class="mb-0 text-white lh-100">Your Goals</h6>
 	          <small>Manager</small>
 	        </div>
 	        <div class="ml-auto">
@@ -246,14 +246,14 @@ body {
               <tr style="border-bottom: 2px solid #dee2e6">
                 <th class="border-bottom-0">Goal Name</th>
                 <th class="border-bottom-0"></th>
-                <th class="d-flex justify-content-end border-bottom-0">isPriority</th>
+                <th class="d-flex justify-content-end border-bottom-0">Priority</th>
               </tr>
             </thead>
             <tbody >
               {{#Objects}}
                 <tr class='border-top'>
                   <td>{{goal_id}}</td>
-                  <td>{{index}}</td>
+                  <td></td>
                   <td class="d-flex justify-content-end border-top-0">
                     <span class="custom-checkbox">
                       <input type="checkbox" id="checkbox2" name="options[]" value="1" {{checked}}>
@@ -275,7 +275,7 @@ body {
                 </a>
               </li>
               {{#page_arr}}
-              <li class="page-item {{active}}"><a class="page-link" href="/goals?cursor={{index}}">{{index}}</a></li>
+              <li class="page-item {{active}}"><a class="page-link" href="/browse?cursor={{index}}">{{index}}</a></li>
               {{/page_arr}}
               <li class="page-item">
                 <a class="page-link" href="#" aria-label="Next">
@@ -314,12 +314,12 @@ body {
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-        <form action='/api/add-goal' method='post'>
+        <form action='/home' method='post'>
           <div class="modal-body">
             <div class="form-group">
               <label for="goalInput">Goal Input</label>
               <input type="text" class="form-control" name="goalInput" aria-describedby="goalHelp" placeholder="Enter goal">
-              <input type='hidden' name="form-id" value='add-goal-form-v1.1' />
+              <input type='hidden' name="form_id" value='add-goal-v1.1' />
               <small id="goalHelp" class="form-text text-muted">Enter a short goal name</small>
             </div>
           </div>
@@ -427,7 +427,7 @@ body {
               {{#Objects}}
                 <tr className='border-top'>
                   <td>{{goal_id}}</td>
-                  <td>{{index}}</td>
+                  <td></td>
                   <td className="d-flex justify-content-end border-top-0">
                     <span className={this.state.check_arr[{{index}}].className || 'custom-checkbox'}>
                       <input id='check{{index}}' type="checkbox" onClick={(e)=>this.update({{index}})}/>
