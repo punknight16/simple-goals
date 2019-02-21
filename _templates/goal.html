@@ -175,11 +175,17 @@ body {
         <form class="form-inline my-2 my-lg-0" action='/documentation'>
           <button class="btn btn-outline-secondary my-2 my-sm-0 mr-sm-2 custom" type="submit">?</button>
         </form>
-        <form class="form-inline my-2 my-lg-0" action='/settings'>
-          <button class="btn btn-outline-secondary my-2 my-sm-0 mr-sm-2 custom" type="submit">
+        <div class="form-inline my-2 my-lg-0">
+          <button class="btn btn-outline-secondary my-2 my-sm-0 mr-sm-2 custom" type="submit" data-toggle="dropdown">
            &#9776;
           </button>
-        </form>
+          
+            <div class="dropdown-menu dropdown-menu-right float-right" style="position:absolute;">
+              <a class="dropdown-item" href="/logout">Logout</a>
+              <button class="dropdown-item" data-toggle="modal" data-target="#deactivateModal">Deactivate Account</button>
+            </div>
+          
+        </div>
       </div>
     </nav>
 
@@ -285,6 +291,33 @@ body {
         </div>
       </div>
     </div>
+    <!-- Modal -->
+    <div class="modal fade" id="deactivateModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Deactivate Account</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form action='/deactivate-account' method='post'>
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="emailInput">Email Confirmation</label>
+              <input type="text" class="form-control" name="emailInput" aria-describedby="goalHelp" placeholder="Enter email">
+              <input type='hidden' name="form_id" value='deactivate-account-v1.1' />
+              <small id="deactivateHelp" class="form-text text-muted">Enter your email to confirm account deactivation</small>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Deactivate Account</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
   <script>
     function update(index){
       document.getElementById(''+index).value='true';

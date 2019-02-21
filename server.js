@@ -14,6 +14,8 @@ var addGoalInteractor = require('./_scripts/add-goal-interactor');
 var prioritizeInteractor = require('./_scripts/prioritize-interactor');
 var listGoalInteractor = require('./_scripts/list-goal-interactor');
 var selectGoalInteractor = require('./_scripts/select-goal-interactor');
+var logoutInteractor = require('./_scripts/logout-interactor');
+var deactivateAccountInteractor = require('./_scripts/deactivate-account-interactor');
 
 var error = function(res, err_msg){
 	console.log(JSON.stringify(err_msg));
@@ -21,9 +23,10 @@ var error = function(res, err_msg){
 };
 
 var displayTemplate = function(res, msg, template=null, args={}){
+	console.log('args: ', args);
 	var template_path = "./_templates/"+template;
 	var full_args = Object.assign(args, {msg: msg});
-	//console.log(args.Objects);
+	console.log("full_args: ", full_args);
 	var stream = mu.compileAndRender(template_path, full_args);
 	stream.pipe(res);
 }
@@ -49,7 +52,8 @@ var data = {
 		{cred_id: 'cred-0vndq7krkn6o', resource_id:'r-mt/get-home', universal_id: 'cred-0vndq7krkn6o'},
 		{cred_id: 'cred-0vndq7krkn6o', resource_id:'r-mt/priortize-home', universal_id: 'cred-0vndq7krkn6o'},
 		{cred_id: 'cred-0vndq7krkn6o', resource_id:'r-mt/search-goal', universal_id: 'cred-0vndq7krkn6o'},
-		{cred_id: 'cred-0vndq7krkn6o', resource_id:'r-mt/list-goal-obj', universal_id: 'public'}
+		{cred_id: 'cred-0vndq7krkn6o', resource_id:'r-mt/list-goal-obj', universal_id: 'public'},
+		{cred_id: 'cred-0vndq7krkn6o', resource_id:'r-mt/logout', universal_id: 'public'}
 	],
 	engagement_data: [],
 	goal_data: [
@@ -157,6 +161,9 @@ ext.editObj = require('./_models/edit-obj');
 ext.editLinkObj = require('./_scripts/edit-link-obj');
 ext.listGoalObj = require('./_scripts/list-goal-obj');
 ext.listObj = require('./_models/list-obj');
+ext.removeObj = require('./_models/remove-obj');
+ext.removeTokenObj = require('./_scripts/remove-token-obj');
+ext.removeCredObj = require('./_scripts/remove-cred-obj');
 
 
 var server = http.createServer(function(req, res){
@@ -172,8 +179,23 @@ var server = http.createServer(function(req, res){
 			stream.pipe(res);
 			break;
 		case 'register':
-			var stream = fs.createReadStream('./_pages/register.html');
-			stream.pipe(res);
+			receiveCookieData(req, function(err, cookie_obj){
+				if(err) {
+					var stream = fs.createReadStream('./_pages/register.html');
+					stream.pipe(res);		
+				} else {
+					if(!cookie_obj.hasOwnProperty('token_id')) return error(res, 'missing auth params');
+					if(!cookie_obj.hasOwnProperty('public_token')) return error(res, 'missing auth params');
+					var args = Object.assign(cookie_obj, { resource_id: 'r-mt/logout', universal_id: 'public'});
+					logoutInteractor(data, config, args, ext, function(err, confirm_args){
+						if(err) return error(res, err);
+						confirm_args.token_obj = null;
+						confirm_args.cookie_obj = null;
+						confirm_args.cookie_script = 'document.cookie = "token=null; path=/";';
+						displayTemplate(res, 'Logout Successful', 'register.html', confirm_args);
+					});
+				}
+			});
 			break;
 		case 'login':
 			var stream = fs.createReadStream('./_pages/login.html');
@@ -188,10 +210,38 @@ var server = http.createServer(function(req, res){
 			stream.pipe(res);
 			break;
 		case 'logout':
-			res.end('logging out');
+			receiveCookieData(req, function(err, cookie_obj){
+				if(err) return error(res, err);
+				if(!cookie_obj.hasOwnProperty('token_id')) return error(res, 'missing auth params');
+				if(!cookie_obj.hasOwnProperty('public_token')) return error(res, 'missing auth params');
+				var args = Object.assign(cookie_obj, { resource_id: 'r-mt/logout', universal_id: 'public'});
+				logoutInteractor(data, config, args, ext, function(err, confirm_args){
+					if(err) return error(res, err);
+					confirm_args.token_obj = null;
+					confirm_args.cookie_obj = null;
+					confirm_args.cookie_script = 'document.cookie = "token=null; path=/";';
+					displayTemplate(res, 'Logout Successful', 'logout.html', confirm_args);
+				});
+			});
 			break;
 		case 'deactivate-account':
-			res.end('deactivate-account');
+			receivePostData(req, function(err, post_obj){
+				if(err) return error(res, err);
+				if(!post_obj.hasOwnProperty('emailInput')) return error(res, 'missing amount');
+				receiveCookieData(req, function(err, cookie_obj){
+					if(err) return error(res, err);
+					if(!cookie_obj.hasOwnProperty('token_id')) return error(res, 'missing auth params');
+					if(!cookie_obj.hasOwnProperty('public_token')) return error(res, 'missing auth params');
+					var args = Object.assign(post_obj, cookie_obj, { resource_id: 'r-mt/deactivate-account' });
+					deactivateAccountInteractor(data, config, args, ext, function(err, confirm_args){
+						if(err) return error(res, err);
+						confirm_args.token_obj = null;
+						confirm_args.cookie_obj = null;
+						confirm_args.cookie_script = 'document.cookie = "token=null; path=/";';
+						displayTemplate(res, 'Account Deactivated', 'register.html', confirm_args);
+					});
+				});
+			});
 			break;
 		case 'browse':
 		  //could be coming from index, home, or goals

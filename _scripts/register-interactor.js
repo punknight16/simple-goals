@@ -50,6 +50,15 @@ function registerInteractor(data, config, args, ext, cb){
 	args.universal_id = args.cred_id;
 	err = ext.addPermissionObj(data, config, args, ext);
 	if(err) return cb('failed to add r-mt/add-goal permission_obj');
+	args.resource_id = 'r-mt/logout'; 
+	args.universal_id = 'public';
+	err = ext.addPermissionObj(data, config, args, ext);
+	if(err) return cb('failed to add r-mt/logout permission_obj');
+	args.resource_id = 'r-mt/deactivate-account'; 
+	args.universal_id = args.cred_id;
+	err = ext.addPermissionObj(data, config, args, ext);
+	if(err) return cb('failed to add r-mt/deactivate-account permission_obj');
+
 
 	err = ext.addEngagementObj(data, config, args, ext);
 	if(err) return cb('failed to add engagement');
