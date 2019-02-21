@@ -577,7 +577,7 @@ var server = http.createServer(function(req, res){
 		default:
 			res.end('bad request');
 	}
-}).listen(3001, function(){
+}).listen(process.env.PORT || 3001, function(){
 	console.log('simple-motivation-therapy is running on 3001');
 });
 
