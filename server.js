@@ -180,7 +180,8 @@ var server = http.createServer(function(req, res){
 			break;
 		case 'register':
 			receiveCookieData(req, function(err, cookie_obj){
-				if(err) {
+				console.log('cookie_obj: ', cookie_obj);
+				if(err || cookie_obj.token_id=='null') {
 					var stream = fs.createReadStream('./_pages/register.html');
 					stream.pipe(res);		
 				} else {
