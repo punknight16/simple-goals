@@ -193,10 +193,11 @@ body {
 
       <div id="wrapper">
       	<div class="p-3 text-white-50 bg-purple rounded-top box-shadow" style="height: 70px">
-          <form class="form-horizontal" action="/browse">
+          <form class="form-horizontal" action="/browse" method="post">
             <div class="form-group row" >
               <div class="col-sm-10">
-                <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search" value={{term_str}}>
+                <input type='hidden' name='form_id' value='search-v1.1' />
+                <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search" name='term_str' value={{term_str}}>
               </div>
                 
                 <button class="btn btn-success my-2 my-sm-0 mr-sm-2" type="submit">Search</button>
@@ -214,7 +215,7 @@ body {
 				  	<tr style="border-bottom: 2px solid #dee2e6">
 				    	<th class="border-bottom-0">New Goals</th>
               <th class="border-bottom-0"></th>
-              <th class="d-flex justify-content-end border-bottom-0">Like</th>
+              <th class="d-flex justify-content-end border-bottom-0">Bookmark</th>
 				  	</tr>
 				  </thead>
 				  <tbody>
@@ -257,8 +258,8 @@ body {
             {{#Objects}}
             <input type='hidden' id='{{index}}' name='{{index}}' value='false' />
             {{/Objects}}
-            <input type='hidden' name='form_id' value='select-v1.1' />
-            <input class="btn btn-primary my-2 my-sm-0 mr-sm-2" type='submit' value='Save Like(s)' />
+            <input type='hidden' name='form_id' value='bookmark-v1.1' />
+            <input class="btn btn-primary my-2 my-sm-0 mr-sm-2" type='submit' value='Save Bookmark(s)' />
           </form>
         </div>
 			</div>

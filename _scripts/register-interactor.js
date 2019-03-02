@@ -30,7 +30,7 @@ function registerInteractor(data, config, args, ext, cb){
 	args.universal_id = 'public';
 	err = ext.addPermissionObj(data, config, args, ext);
 	if(err) return cb('failed to add list-goal permission_obj');
-	args.resource_id = 'r-mt/select-home'; 
+	args.resource_id = 'r-mt/bookmark-goal'; 
 	args.universal_id = args.cred_id;
 	err = ext.addPermissionObj(data, config, args, ext);
 	if(err) return cb('failed to add r-mt/select-home permission_obj');
@@ -74,6 +74,7 @@ function registerInteractor(data, config, args, ext, cb){
 		link_arr: [],
 		link_pages: null
 	};
+	config.update_needed = true;
 	return cb(null, {
 		token_obj: token_obj, 
 		menu_items: menu_obj.menu_items

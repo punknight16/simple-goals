@@ -51,7 +51,8 @@ var data = {
 		{cred_id: 'cred-0vndq7krkn6o', resource_id:'r-mt/menu', universal_id: 'menu-2'},
 		{cred_id: 'cred-0vndq7krkn6o', resource_id:'r-mt/get-home', universal_id: 'cred-0vndq7krkn6o'},
 		{cred_id: 'cred-0vndq7krkn6o', resource_id:'r-mt/priortize-home', universal_id: 'cred-0vndq7krkn6o'},
-		{cred_id: 'cred-0vndq7krkn6o', resource_id:'r-mt/search-goal', universal_id: 'cred-0vndq7krkn6o'},
+		{cred_id: 'cred-0vndq7krkn6o', resource_id:'r-mt/search-goal', universal_id: 'public'},
+		{cred_id: 'cred-0vndq7krkn6o', resource_id:'r-mt/bookmark-goal', universal_id: 'cred-0vndq7krkn6o'},
 		{cred_id: 'cred-0vndq7krkn6o', resource_id:'r-mt/list-goal-obj', universal_id: 'public'},
 		{cred_id: 'cred-0vndq7krkn6o', resource_id:'r-mt/logout', universal_id: 'public'}
 	],
@@ -128,8 +129,10 @@ var config = {
 	last_engagement_arr: [],
 	token_arr: [],
 	checkout_cache: {},
-	client_cache: {}
+	client_cache: {},
+	update_needed: false
 };
+
 var ext = {};
 ext.generateId = require('./_models/generate-id');
 ext.addCredObj = require('./_scripts/add-cred-obj');
@@ -164,6 +167,73 @@ ext.listObj = require('./_models/list-obj');
 ext.removeObj = require('./_models/remove-obj');
 ext.removeTokenObj = require('./_scripts/remove-token-obj');
 ext.removeCredObj = require('./_scripts/remove-cred-obj');
+
+if(process.env.NODE_ENV=='dev'){
+	console.log('running dev environment');
+	fs.readFile(__dirname+'/data.json', 'utf8', function(err, loaded_data){
+		console.log('err: ', err);
+		data = JSON.parse(loaded_data);
+	});
+
+	setInterval(function(){
+		console.log('checking if data needs to be stored');
+		if(config.update_needed){
+			fs.writeFile(__dirname+'/data.json', JSON.stringify(data), 'utf8', function(err){
+				config.update_needed = false;
+				console.log('data stored');
+			});		
+		} else {
+			console.log('no updates since data last stored');
+		}
+	}, 5000)
+} else if (process.env.NODE_ENV=='prod'){
+	console.log('running prod environment');
+	var AWS = require("aws-sdk");
+	var s3 = new AWS.S3({
+		"region": "us-west-2",
+		"accessKeyId": require('./_config/creds.js').aws_creds.Access_key_ID,
+		"secretAccessKey": require('./_config/creds.js').aws_creds.Secret_access_key
+	});
+
+	var bucket = 'warmup14';
+
+	var params = {
+		Bucket: bucket,
+		Key: 'data.json',
+		ResponseContentEncoding: 'utf8'
+	};
+	s3.getObject(params, function(err, loaded_data) {
+		if (err) console.log(err);
+		if(loaded_data == null){
+			//error here
+			data = {};
+		} else {
+			data = JSON.parse(loaded_data.Body.toString());
+			console.log('data var set: ', JSON.stringify(data));	
+		}
+	});
+
+	setInterval(function(){
+		console.log('checking if data needs to be stored');
+		if(config.update_needed){
+			var body_str = JSON.stringify(data);
+			var params2 = {
+				Body: body_str,
+				Bucket: bucket,
+				Key: 'data.json',
+				ContentType: "String",
+				ContentLength: body_str.length
+			};
+			s3.putObject(params2, function(err, stored_data) {
+				if (err) console.log(err);
+				config.update_needed = false;
+				console.log('data stored: ', JSON.stringify(stored_data));
+			});	
+		} else {
+			console.log('no updates since data last stored');
+		}
+	}, 1800000) //1800000 is 30 min
+}
 
 
 var server = http.createServer(function(req, res){
@@ -228,7 +298,7 @@ var server = http.createServer(function(req, res){
 		case 'deactivate-account':
 			receivePostData(req, function(err, post_obj){
 				if(err) return error(res, err);
-				if(!post_obj.hasOwnProperty('emailInput')) return error(res, 'missing amount');
+				if(!post_obj.hasOwnProperty('emailInput')) return error(res, 'missing email validation');
 				receiveCookieData(req, function(err, cookie_obj){
 					if(err) return error(res, err);
 					if(!cookie_obj.hasOwnProperty('token_id')) return error(res, 'missing auth params');
@@ -413,7 +483,7 @@ var server = http.createServer(function(req, res){
 								displayTemplate(res, 'Registration Successful', 'help.html', args);
 							});
 							break;
-						case 'select-v1.1':
+						case 'bookmark-v1.1':
 							var keys = Object.keys(post_obj);
 							var values = Object.values(post_obj);
 							//console.log(values);
@@ -428,7 +498,7 @@ var server = http.createServer(function(req, res){
 								if(err) return error(res, err);
 								if(!cookie_obj.hasOwnProperty('token_id')) return error(res, 'missing auth params');
 								if(!cookie_obj.hasOwnProperty('public_token')) return error(res, 'missing auth params');
-								var args = Object.assign(post_obj, cookie_obj,{resource_id: 'r-mt/select-home', link_arr: link_arr});
+								var args = Object.assign(post_obj, cookie_obj,{resource_id: 'r-mt/bookmark-goal', link_arr: link_arr});
 								selectGoalInteractor(data, config, args, ext, function(err, confirm_args){
 									if(err) return error(res, err);
 									confirm_args.cookie_script = '';
@@ -446,7 +516,7 @@ var server = http.createServer(function(req, res){
 									var sorted_links = confirm_args.link_arr.sort((a, b)=>{return a.priority-b.priority});
 									swapIdForName(data.name_data, sorted_links, function(err, swapped_data){
 										confirm_args.Objects = swapped_data;
-										displayTemplate(res, 'Selected Goals added', 'home.html', confirm_args);
+										displayTemplate(res, 'Bookmarked Goals added', 'home.html', confirm_args);
 									});
 								});
 							});
@@ -495,7 +565,7 @@ var server = http.createServer(function(req, res){
 			var stream = fs.createReadStream('./build/'+path_params[2]);
 			stream.pipe(res);
 			break;
-		case 'api':
+		/*case 'api':
 			switch(path_params[2]){
 				case 'register':
 					receivePostData(req, function(err, post_obj){
@@ -574,7 +644,7 @@ var server = http.createServer(function(req, res){
 				default:
 					res.end('bad api request')
 			}
-			break;
+			break; */
 		default:
 			res.end('bad request');
 	}

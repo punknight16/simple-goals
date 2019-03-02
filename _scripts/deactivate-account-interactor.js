@@ -6,6 +6,7 @@ function deactivateAccountInteractor(data, config, args, ext, cb){
 		args.email = args.emailInput;
 		var cookie_obj = ext.removeTokenObj(data, config, args, ext);
 		var cred_obj = ext.removeCredObj(data, config, args, ext);
+		config.update_needed = true;
 		return cb(null, cookie_obj);
 	});
 }

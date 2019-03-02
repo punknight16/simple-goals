@@ -17,6 +17,7 @@ function prioritizeInteractor(data, config, args, ext, cb){
 			return a.priority-b.priority
 		});
 		if(typeof menu_obj == 'undefined' || !menu_obj.hasOwnProperty('menu_items')) return cb('couldn\'t get menu_items');
+		config.update_needed = true;
 		return cb(null, { 
 			menu_items: menu_obj.menu_items,
 			link_arr: sorted_links.map((item, index)=>{item.index=index; return item})

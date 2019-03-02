@@ -34,7 +34,7 @@
 		<p>Once you have your goals written out, you should select a few that have the biggest impact on your life. These should be your priority until you have completed them. Warren Buffet has a 5/25 rule for staying focused. Basically, only try to accomplish 5 things in the foreseeable future, and actively avoid the other 20.</p>
 			
 		<h4>2. Release Info</h4>
-		<strong>Version 1.1</strong>
+		<strong>Version 1.1 <i>Done on February 22, 2019!</i></strong>
 		<p>Simple html pages were created for the following routes:</p>
 			<ul>
 				<li>/index</li>
@@ -42,26 +42,67 @@
 				<li>/login</li>
 				<li>/home</li>
 				<li>/pricing</li>
-				<li>/goals</li>
+				<li>/browse</li>
 				<li>/documentation</li>
 				<li>/logout</li> 
 				<li>/deactivate-account</li>
 			</ul>
-		<p>From the /api route you can further manipulate goals linked to your account through these routes:</p>
+		<p>From the /home route you can further manipulate goals linked to your account through these post forms:</p>
 			<ul>
-				<li>/add-goal</li>
-				<li>/search-goal</li>
-				<li>/prioritize-goal</li>
+				<li>add-goal-v1.1</li>
+				<li>search-goal-v1.1</li>
+				<li>prioritize-goal-v1.1</li>
 			</ul>
 		<p>Some of this functionality will be turned on or off depending on the type of user.</p>
+		<strong>Version 1.2</strong>
+		<p>The menu system in v1.1 has unnecessary complexity. A simple menu system will be implemented with the following 9 routes:</p>
+		<i>Left-side main menu:</i>
+		<ul>
+			<li>/home</li> //which is your home blog
+			<li>/progress</li> //which is a dashboard of your blog metrics
+			<li>/browse</li>  //which is a search engine of other's blogs
+		</ul>
+		<i>Right-side icon menu:</i>
+		<ul>
+			<li>/pricing</li> //which gives access to one retail offer
+			<li>/documentation</li>
+			<li>/settings
+				<li>/badges</li> //which gives access to badges
+				<li>/</li>
+				</li>
+		</ul>
+		<i>Hidden:</i>
+		<ul>
+			<li>/splash</li>
+			<li>/onboard</li>
+			<li>/user</li>
+		</ul>
+		<p>Acting intentionally toward accomplishing ONE goal at a time is the key to success. This means figuring out what success means in the context of a goal by defining a metric to measure how well you are doing, and then doing something CONSISTENTLY to push that metric in the right direction. The easiest way to track your progress when performing a test on yourself is keeping a blog or journal about your plans and progress. Thus the /sprint route was added</p>
+		<p>Four actions can be applied to a sprint using forms:</p>
+		<ul>
+			<li>open-sprint-v1.2</li>
+			<li>add-to-sprint-v1.2</li>
+			<li>support-sprint-v1.2</li>
+			<li>close-sprint-v1.2</li>
+		</ul>
+
+		<p>Creating a sprint with the open-sprint-v1.2 form shows that you have an intention to test yourself over a period of time. Your progress can be blogged about and tracked with the add-to-sprint-v1.2 form. Next, a third-party can show support through the support-sprint-v1.2 form. Supporting a sprint means someone gives something toward the sprint, and a picture is taken as proof! The book "Happy Money" goes into detail about how investing in others has synergistic effects that help both the giver and the receiver. Finally, closing your sprint through the close-sprint-v1.2 form represents that you have taken some actions, however small, in furtherance of the goal, and you are ready to lock-in the results. The results are recorded and will be published publicly in future versions.</p>
+
+		<p>An application such as this starts to grow many heads in a trap known as "feature creep." I do not intend to fall into that trap... however. Although version 1.1 went live, it was missing many of the features that would prove whether it was successful or not. Most importantly, although I have laid the ground work for it, I am not tracking whether users are actually gaining value from the application. Thus, version 1.2 needs aws-s3 storage added, and a user page that tracks retention intensity of each user (total number of engagements/number of days since registration).</p>
 		
+
+
 		<h4>3. FAQ</h4>
 		<p><strong>Q:</strong> Trouble Logging in?<br />
-		<strong>A:</strong> Try email: "<em>demo@mail.com</em>" and password: "<em>123</em>".</p>
+		<strong>A:</strong> Try email: "<em>demo@mail.com</em>" and password: "<em>123</em>". If that doesn't work the server is down. Otherwise, you might have to reset your password. Just email me at punknight16@gmail.com</p>
 		<p><strong>Q:</strong> Why are goals limited to 30 characters?<br />
 		<strong>A:</strong> These are really goal names. Later functionality will include a deeper look into goal descriptions.</p>
-		<h4>4. Bug Tracker</h4>
-		<p>None as of yet!</p>
+		<p><strong>Q:</strong> Why use this site and not paper and pencil?<br />
+		<strong>A:</strong> As of version 1.2 the public blog should encourage a certain amount of accountability that a personal paper journal cannot provide. The goal of this site is to create tools to make people more successful. By publicly displaying your goals and struggles, we can use that data as a community to help everyone.</p>
+		<h4>4. Issue Tracking</h4>
+		<p>We are using github for this:</p>
+		<a href='https://github.com/punknight16/simple-goals/issues'>add issues here</a>
+
 	</div>
 <body>
 </html>

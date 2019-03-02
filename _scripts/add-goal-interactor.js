@@ -4,7 +4,7 @@ function addGoalInteractor(data, config, args, ext, cb){
 	if(typeof args.engagement_id == 'undefined') return cb('no engagement_id');
 	args.goal_id = ext.generateId(data.universal_data, 'goal-', 10);
 	//
-	console.log("args: ", args);
+	
 	ext.authorizeRequest(data, config, args, ext, function(err, cred_id){
 		if(err) return cb(err);
 		args.cred_id = cred_id;
@@ -30,6 +30,7 @@ function addGoalInteractor(data, config, args, ext, cb){
 		config.client_cache[cred_id].link_arr = link_arr.map((item, index)=>{item.index=index; return item});
 		config.client_cache[cred_id].link_pages = Math.ceil(link_arr.length/10);
 		config.client_cache[cred_id].link_cursor = args.link_cursor;
+		config.update_needed = true;
 		return cb(null, {
 			menu_items: menu_obj.menu_items,
 			link_arr: config.client_cache[cred_id].link_arr.slice((args.link_cursor-1)*10, args.link_cursor*10),
