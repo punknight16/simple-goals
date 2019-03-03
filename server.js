@@ -16,6 +16,7 @@ var listGoalInteractor = require('./_scripts/list-goal-interactor');
 var selectGoalInteractor = require('./_scripts/select-goal-interactor');
 var logoutInteractor = require('./_scripts/logout-interactor');
 var deactivateAccountInteractor = require('./_scripts/deactivate-account-interactor');
+var listUserInteractor = require('./_scripts/list-user-interactor');
 
 var error = function(res, err_msg){
 	console.log(JSON.stringify(err_msg));
@@ -93,7 +94,7 @@ var data = {
 		{menu_id: 'menu-0', menu_items: [
 			{link: '/home', value: 'Home', active: 'active', sr: '<span class="sr-only">(current)</span>'},
 			{link: '/browse', value: 'Browse'},
-			{link: '/review', value: 'Write A Review!'}
+			{link: '/user', value: 'Help Others!'}
 		]},
 		{menu_id: 'menu-1', menu_items: [
 			{link: '/home', value: 'Home', active: 'active', sr: '<span class="sr-only">(current)</span>'},
@@ -108,7 +109,7 @@ var data = {
 		{menu_id: 'menu-3', menu_items: [
 			{link: '/home', value: 'Home'},
 			{link: '/browse', value: 'Browse', active: 'active', sr: '<span class="sr-only">(current)</span>'},
-			{link: '/review', value: 'Write A Review!'}
+			{link: '/user', value: 'Help Others!'}
 		]},
 		{menu_id: 'menu-4', menu_items: [
 			{link: '/home', value: 'Home'},
@@ -119,6 +120,11 @@ var data = {
 			{link: '/home', value: 'Home'},
 			{link: '/browse', value: 'Browse', active: 'active', sr: '<span class="sr-only">(current)</span>'},
 			{link: '/register', value: 'Register Today!'}
+		]},
+		{menu_id: 'menu-6', menu_items: [
+			{link: '/home', value: 'Home'},
+			{link: '/browse', value: 'Browse'},
+			{link: '/user', value: 'Help Others!', active: 'active', sr: '<span class="sr-only">(current)</span>'}
 		]}
 	],
 	sale_data: []
@@ -168,6 +174,8 @@ ext.removeObj = require('./_models/remove-obj');
 ext.removeTokenObj = require('./_scripts/remove-token-obj');
 ext.removeCredObj = require('./_scripts/remove-cred-obj');
 ext.removePermissionObj = require('./_scripts/remove-permission-obj');
+ext.listCredObj = require('./_scripts/list-cred-obj');
+ext.listEngagementObj = require('./_scripts/list-engagement-obj');
 
 if(process.env.NODE_ENV=='dev'){
 	console.log('running dev environment');
@@ -598,69 +606,33 @@ var server = http.createServer(function(req, res){
 			var stream = fs.createReadStream('./build/'+path_params[2]);
 			stream.pipe(res);
 			break;
-		/*case 'api':
-			switch(path_params[2]){
-				case 'register':
-					receivePostData(req, function(err, post_obj){
-						if(err) return error(res, err);
-						if(!post_obj.hasOwnProperty('username') || 
-							!post_obj.hasOwnProperty('email') ||
-							!post_obj.hasOwnProperty('password')) return error(res, 'missing register params');
-						registerInteractor(data, config, post_obj, ext, function(err, cookie_obj, menu_items){
-							if(err) return error(res, err);
-							displayTemplate(res, cookie_obj, 'home.html', menu_items);
-						});
+		case 'user':
+			receiveCookieData(req, function(err, cookie_obj){
+				if(err) return error(res, err);
+				if(!cookie_obj.hasOwnProperty('token_id')) return error(res, 'missing auth params');
+				if(!cookie_obj.hasOwnProperty('public_token')) return error(res, 'missing auth params');
+				var args = Object.assign(cookie_obj, { resource_id: 'r-mt/user' });
+				listUserInteractor(data, config, args, ext, function(err, confirm_args){
+					if(err) return error(res, err);
+					confirm_args.Items = confirm_args.menu_items;
+					confirm_args.page_arr = new Array(confirm_args.user_pages).fill({a:1}).map((item, index)=>{ 
+						item = {};
+						item.active = '';
+						if((confirm_args.user_cursor-1)==index){
+							item.active = 'active'
+						}
+						item.index = index+1;
+						return item;
 					});
-					break;
-				case 'login':
-					receivePostData(req, function(err, post_obj){
-						if(err) return error(res, err);
-						if(!post_obj.hasOwnProperty('email') ||
-							!post_obj.hasOwnProperty('password')) return error(res, 'missing login params');
-						loginInteractor(data, config, post_obj, ext, function(err, token_obj, menu_items){
-							if(err) return error(res, err);
-							displayTemplate(res, token_obj, 'home.html', menu_items);
-						});
+					console.log('confirm_args for getUserInteractor: ', confirm_args);
+					var sorted_users = confirm_args.user_arr.sort((a, b)=>{return a.engagements_per_day-b.engagements_per_day});
+					swapIdForName(data.name_data, sorted_users, function(err, swapped_data){
+						confirm_args.Objects = swapped_data;
+						displayTemplate(res, '', 'user.html', confirm_args);
 					});
-					break;
-				
-				case 'search-goal':
-					receivePostData(req, function(err, post_obj){
-						if(err) return error(res, err);
-						if(!post_obj.hasOwnProperty('term_str')) return error(res, 'missing amount');
-						receiveCookieData(req, function(err, cookie_obj){
-							if(err) return error(res, err);
-							if(!cookie_obj.hasOwnProperty('token_id')) return error(res, 'missing auth params');
-							if(!cookie_obj.hasOwnProperty('public_token')) return error(res, 'missing auth params');
-							var args = Object.assign(post_obj, cookie_obj, { resource_id: 'r-mt/search-goal' });
-							searchGoalInteractor(data, config, args, ext, function(err, menu_items, goal_arr){
-								if(err) return error(res, err);
-								if(typeof menu_items == 'undefined') return error(res, 'session expired');
-								displayTemplate(res, cookie_obj, 'goal.html', menu_items, data.name_data, goal_arr, post_obj.term_str);
-							});
-						})
-					});
-					break;
-				case 'add-goal':
-					receivePostData(req, function(err, post_obj){
-						if(err) return error(res, err);
-						if(!post_obj.hasOwnProperty('goalInput')) return error(res, 'missing goal params');
-						receiveCookieData(req, function(err, cookie_obj){
-							if(err) return error(res, err);
-							if(!cookie_obj.hasOwnProperty('token_id')) return error(res, 'missing auth params');
-							if(!cookie_obj.hasOwnProperty('public_token')) return error(res, 'missing auth params');
-							var args = Object.assign(post_obj, cookie_obj, { resource_id: 'r-mt/add-goal' });
-							addGoalInteractor(data, config, post_obj, ext, function(err, token_obj){
-								if(err) return error(res, err);
-								displayTemplate(res, token_obj);
-							});
-						})
-					});
-					break;
-				default:
-					res.end('bad api request')
-			}
-			break; */
+				});
+			});
+			break;
 		default:
 			res.end('bad request');
 	}

@@ -5,6 +5,8 @@ function selectGoalInteractor(data, config, args, ext, cb){
 	ext.authorizeRequest(data, config, args, ext, function(err, cred_id){
 		if(err) return cb(err);
 		args.cred_id = cred_id;
+		err = ext.addEngagementObj(data, config, args, ext);
+		if(err) return cb('failed to add engagement');
 		var menu_id = ext.getMenuIdFromPermission(data.permission_data, cred_id, ext.getPermissionObj, ext.getObj);
 		
 		if(typeof menu_id == 'undefined') return cb('couldn\'t get menu_id');

@@ -13,6 +13,10 @@ function addSaleInteractor(data, config, args, ext, cb){
 		args.universal_id = 'menu-0';
 		err = ext.addPermissionObj(data, config, args, ext);
 		if(err) return cb('failed to add menu permission_obj');
+		args.resource_id = 'r-mt/user'; 
+		args.universal_id = cred_id;
+		err = ext.addPermissionObj(data, config, args, ext);
+		if(err) return cb('failed to add list-users permission_obj');
 		//add permission for paid user menu
 		args.resource_id = 'r-mt/add-sale'; 
 		args.cred_id = cred_id;
