@@ -204,7 +204,7 @@ if(process.env.NODE_ENV=='dev'){
 		"secretAccessKey": require('./_config/creds.js').aws_creds.Secret_access_key
 	});
 
-	var bucket = 'warmup14';
+	var bucket = 'simple-goals';
 
 	var params = {
 		Bucket: bucket,
