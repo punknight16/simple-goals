@@ -172,58 +172,30 @@ body {
     </nav>
 
     <div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
-      <h1 class="display-4">Pricing</h1>
-      <p class="lead"><strong>Upgraded</strong> users have their data stored in the cloud, so they can access their data from any device, and have access to all menu options and premium content such as reviews of books and research that we have done in this space.</p>
+      <h1 class="display-4">Upgrade</h1>
+      <p class="lead"><strong>Champion</strong> users are obliged to help other's acheive their goals.
+        They have access to user goals and activities, and are thus encouraged to mine that data for ways to help their fellow user.</p>
     </div>
 
     <div class="container">
-      <div class="card-deck mb-3 text-center">
+      <div class="card-deck mb-3 text-center" style="width: 18rem; margin: auto;">
+        
         <div class="card mb-4 box-shadow">
           <div class="card-header">
-            <h4 class="my-0 font-weight-normal">Free</h4>
+            <h4 class="my-0 font-weight-normal">Champion Package</h4>
           </div>
           <div class="card-body">
-            <h1 class="card-title pricing-card-title">$0 <small class="text-muted">/ yr</small></h1>
+            <h1 class="card-title pricing-card-title">$5 <small class="text-muted">/ yr</small></h1>
             <ul class="list-unstyled mt-3 mb-4">
-              <li>Access Goals Database</li>
-              <li>Email support</li>
-              <li>Help center access</li>
-              <br />
-            </ul>
-            <button type="button" class="btn btn-lg btn-block btn-outline-primary">Sign up for free</button>
-          </div>
-        </div>
-        <div class="card mb-4 box-shadow">
-          <div class="card-header">
-            <h4 class="my-0 font-weight-normal">Pro</h4>
-          </div>
-          <div class="card-body">
-            <h1 class="card-title pricing-card-title">$2 <small class="text-muted">/ yr</small></h1>
-            <ul class="list-unstyled mt-3 mb-4">
-              <li>Access Goals Database</li>
+              <li>Access to Goals Database</li>
               <li>Cloud Storage</li>
               <li>Priority email support</li>
-              <li>Help center access</li>
             </ul>
             <button type="button" class="btn btn-lg btn-block btn-primary" data-toggle="modal" data-target="#exampleModal">
             Get started</button>
           </div>
         </div>
-        <div class="card mb-4 box-shadow">
-          <div class="card-header">
-            <h4 class="my-0 font-weight-normal">Enterprise</h4>
-          </div>
-          <div class="card-body">
-            <h1 class="card-title pricing-card-title">$29 <small class="text-muted">/ yr</small></h1>
-            <ul class="list-unstyled mt-3 mb-4">
-              <li>Private Goals Database</li>
-              <li>Cloud storage</li>
-              <li>Phone and email support</li>
-              <li>Help center access</li>
-            </ul>
-            <button type="button" class="btn btn-lg btn-block btn-primary">Contact us</button>
-          </div>
-        </div>
+        
       </div>
 
       <footer class="pt-4 my-md-5 pt-md-5 border-top">
@@ -271,7 +243,7 @@ body {
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Motivation Therapy Pro.............. $2.00 (USD)</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Champion Package................... $5.00 (USD)</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -292,8 +264,8 @@ body {
 <script src="https://www.paypalobjects.com/api/checkout.js"></script>
 <script>
 // Render the PayPal button
-var amount = '0.01';
-var product = 'MT-Pro-v1.1';
+var amount = '5.00';
+var product = 'mt/champion-v1.1';
 paypal.Button.render({
 // Set your environment
 env: 'sandbox', // sandbox | production
@@ -324,7 +296,7 @@ funding: {
 // Create a PayPal app: https://developer.paypal.com/developer/applications/create
 client: {
   sandbox: 'AV5dXHfVcaxTeSK4f4XT1UjoHAAwe56EqLaxXOVtX1v-xHWtX2LM4E8XPUHohjR3H2nNyxcUOtEm1B4T',
-  production: '<insert production client id>'
+  production: '<hidden>'
 },
 
 payment: function (data, actions) {
@@ -353,10 +325,11 @@ onAuthorize: function (data, actions) {
 function logPayment(amount, product) {
     var form = document.createElement("form");
     var element1 = document.createElement("input"); 
-    var element2 = document.createElement("input");  
+    var element2 = document.createElement("input");
+    var element3 = document.createElement("input");  
 
     form.method = "POST";
-    form.action = "api/add-sale";   
+    form.action = "/home";   
 
     element1.value=amount;
     element1.name="amount";
@@ -365,6 +338,10 @@ function logPayment(amount, product) {
     element2.value=product;
     element2.name="product";
     form.appendChild(element2);
+
+    element3.value='add-sale-v1.1';
+    element3.name="form_id";
+    form.appendChild(element3);
 
     document.body.appendChild(form);
 

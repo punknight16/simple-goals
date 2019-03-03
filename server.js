@@ -167,6 +167,7 @@ ext.listObj = require('./_models/list-obj');
 ext.removeObj = require('./_models/remove-obj');
 ext.removeTokenObj = require('./_scripts/remove-token-obj');
 ext.removeCredObj = require('./_scripts/remove-cred-obj');
+ext.removePermissionObj = require('./_scripts/remove-permission-obj');
 
 if(process.env.NODE_ENV=='dev'){
 	console.log('running dev environment');
@@ -259,11 +260,15 @@ var server = http.createServer(function(req, res){
 					if(!cookie_obj.hasOwnProperty('public_token')) return error(res, 'missing auth params');
 					var args = Object.assign(cookie_obj, { resource_id: 'r-mt/logout', universal_id: 'public'});
 					logoutInteractor(data, config, args, ext, function(err, confirm_args){
-						if(err) return error(res, err);
-						confirm_args.token_obj = null;
-						confirm_args.cookie_obj = null;
-						confirm_args.cookie_script = 'document.cookie = "token=null; path=/";';
-						displayTemplate(res, 'Logout Successful', 'register.html', confirm_args);
+						if(err) {
+							var fake_args = {cookie_script: 'document.cookie = "token=null; path=/";'};
+							displayTemplate(res, '', 'register.html', fake_args);
+						} else {
+							confirm_args.token_obj = null;
+							confirm_args.cookie_obj = null;
+							confirm_args.cookie_script = 'document.cookie = "token=null; path=/";';
+							displayTemplate(res, 'Logout Successful', 'register.html', confirm_args);
+						}
 					});
 				}
 			});
@@ -552,8 +557,36 @@ var server = http.createServer(function(req, res){
 									});
 								});
 							});
+							break;
+						case 'add-sale-v1.1':
+							if(!post_obj.hasOwnProperty('amount')) return error(res, 'missing amount');
+							if(!post_obj.hasOwnProperty('product')) return error(res, 'missing product');
+							receiveCookieData(req, function(err, cookie_obj){
+								if(err) return error(res, err);
+								if(!cookie_obj.hasOwnProperty('token_id')) return error(res, 'missing auth params');
+								if(!cookie_obj.hasOwnProperty('public_token')) return error(res, 'missing auth params');
+								var args = Object.assign(post_obj, cookie_obj, { resource_id: 'r-mt/add-sale' });
+								addSaleInteractor(data, config, post_obj, ext, function(err, confirm_args){
+									if(err) return error(res, err);
+									confirm_args.cookie_script = '';
+									confirm_args.Items = confirm_args.menu_items;
+									confirm_args.page_arr = new Array(confirm_args.link_pages).fill({a:1}).map((item, index)=>{ 
+										item = {};
+										item.active = '';
+										if((confirm_args.link_cursor-1)==index){
+											item.active = 'active'
+										}
+										item.index = index+1;
+										return item;
+									});
 							
-							
+									var sorted_links = confirm_args.link_arr.sort((a, b)=>{return a.priority-b.priority});
+									swapIdForName(data.name_data, sorted_links, function(err, swapped_data){
+										confirm_args.Objects = swapped_data;
+										displayTemplate(res, 'Congrats, you are a champion!', 'home.html', confirm_args);
+									});
+								});
+							})
 							break;
 						default:
 							error(res, 'can\'t find route to match form_id');
@@ -590,24 +623,7 @@ var server = http.createServer(function(req, res){
 						});
 					});
 					break;
-				case 'add-sale':
-					receivePostData(req, function(err, post_obj){
-						if(err) return error(res, err);
-						if(!post_obj.hasOwnProperty('amount')) return error(res, 'missing amount');
-						if(!post_obj.hasOwnProperty('product')) return error(res, 'missing product');
-						receiveCookieData(req, function(err, cookie_obj){
-							if(err) return error(res, err);
-							if(!cookie_obj.hasOwnProperty('token_id')) return error(res, 'missing auth params');
-							if(!cookie_obj.hasOwnProperty('public_token')) return error(res, 'missing auth params');
-							var args = Object.assign(post_obj, cookie_obj, { resource_id: 'r-mt/add-sale' });
-							addSaleInteractor(data, config, post_obj, ext, function(err, menu_items){
-								if(err) return error(res, err);
-								if(typeof menu_items == 'undefined') return error(res, 'session expired');
-								displayTemplate(res, cookie_obj, 'home.html', menu_items);
-							});
-						})
-					});
-					break;
+				
 				case 'search-goal':
 					receivePostData(req, function(err, post_obj){
 						if(err) return error(res, err);
