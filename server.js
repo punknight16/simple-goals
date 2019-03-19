@@ -17,6 +17,7 @@ var selectGoalInteractor = require('./_scripts/select-goal-interactor');
 var logoutInteractor = require('./_scripts/logout-interactor');
 var deactivateAccountInteractor = require('./_scripts/deactivate-account-interactor');
 var listUserInteractor = require('./_scripts/list-user-interactor');
+var inspectSprintInteractor = require('./_scripts/inspect-sprint-interactor');
 
 var error = function(res, err_msg){
 	console.log(JSON.stringify(err_msg));
@@ -46,7 +47,10 @@ var data = {
 		{universal_id: 'cred-0vndq7krkn6o', universal_name: 'demo-user'},
 		{universal_id: 'g1', universal_name: 'find a job'},
 		{universal_id: 'g2', universal_name: 'plan date with wife'},
-		{universal_id: 'g3', universal_name: '40 pushups'}
+		{universal_id: 'g3', universal_name: '40 pushups'},
+		{universal_id: 'a0', universal_name: 'my first plan'},
+		{universal_id: 'a1', universal_name: 'making progress'},
+		{universal_id: 's0', universal_name: 'monetize-geekly-grind'}
 	],
 	permission_data: [
 		{cred_id: 'cred-0vndq7krkn6o', resource_id:'r-mt/menu', universal_id: 'menu-2'},
@@ -54,10 +58,14 @@ var data = {
 		{cred_id: 'cred-0vndq7krkn6o', resource_id:'r-mt/priortize-home', universal_id: 'cred-0vndq7krkn6o'},
 		{cred_id: 'cred-0vndq7krkn6o', resource_id:'r-mt/search-goal', universal_id: 'public'},
 		{cred_id: 'cred-0vndq7krkn6o', resource_id:'r-mt/bookmark-goal', universal_id: 'cred-0vndq7krkn6o'},
+		{cred_id: 'cred-0vndq7krkn6o', resource_id:'r-mt/inspect-sprint', universal_id: 'cred-0vndq7krkn6o'},
 		{cred_id: 'cred-0vndq7krkn6o', resource_id:'r-mt/list-goal-obj', universal_id: 'public'},
 		{cred_id: 'cred-0vndq7krkn6o', resource_id:'r-mt/logout', universal_id: 'public'}
 	],
-	engagement_data: [],
+	engagement_data: [
+		{engagement_id:"e0", parent_id:"--", cred_id:"cred-0vndq7krkn6o", date:"2019-03-02T21:50:47.898Z", form_id:"login-v1.1"},
+		{engagement_id:"e1", parent_id:"e0", cred_id:"cred-0vndq7krkn6o", date:"2019-03-02T21:51:47.985Z", form_id:"prioritize-v1.1"}
+	],
 	goal_data: [
 		{goal_id: 'g1', universal_id: 'public'},
 		{goal_id: 'g2', universal_id: 'public'},
@@ -78,9 +86,10 @@ var data = {
 		{goal_id: 'g17', universal_id: 'public'}
 	],
 	tag_data: [
-		{goal_id: 'g1', tag_name: 'career'},
 		{goal_id: 'g2', tag_name: 'relationship'},
-		{goal_id: 'g3', tag_name: 'fitness'}
+		{goal_id: 'g3', tag_name: 'fitness'},
+		{tag_name: 'career', goal_id: 'g1', sprint_id: 's0', article_id: 'a1'},
+		{tag_name: 'career', goal_id: 'g1', sprint_id: 's0', article_id: 'a2'}
 	],
 	link_data: [
 		{cred_id: 'cred-0vndq7krkn6o', goal_id: 'g1', priority: 1, checked: ''},
@@ -126,6 +135,15 @@ var data = {
 			{link: '/browse', value: 'Browse'},
 			{link: '/user', value: 'Help Others!', active: 'active', sr: '<span class="sr-only">(current)</span>'}
 		]}
+	],
+	sprint_data: [
+		{sprint_id: 's0', article_id: 'a1', cred_id: 'cred-0vndq7krkn6o', goal_id: 'g1', kpi: 'revenue'}
+	],
+	article_data: [
+		{article_id: 'a0', parent_id: null, sprint_id: 's0', metric: '$100', engagement_id: 'e0', 
+			article_description: 'In order to get these guys, some money I plan to review all of the ways a blog typically monetizes and implement them one by one in a 2 week sprint cycle.'},
+		{article_id: 'a1', parent_id: 'a0', sprint_id: 's0', metric: '$400', engagement_id: 'e1', 
+			article_description: 'I first attempted to monetize by getting advertisers interested in branded content on the website'}
 	],
 	sale_data: []
 };
@@ -176,6 +194,7 @@ ext.removeCredObj = require('./_scripts/remove-cred-obj');
 ext.removePermissionObj = require('./_scripts/remove-permission-obj');
 ext.listCredObj = require('./_scripts/list-cred-obj');
 ext.listEngagementObj = require('./_scripts/list-engagement-obj');
+ext.getSprintObj = require('./_scripts/get-sprint-obj');
 
 if(process.env.NODE_ENV=='dev'){
 	console.log('running dev environment');
@@ -596,7 +615,32 @@ var server = http.createServer(function(req, res){
 								});
 							})
 							break;
+						case 'inspect-sprint-v1.2':
+							//receive post data
+							if(post_obj.hasOwnProperty('sprint_id')){
+								receiveCookieData(req, function(err, cookie_obj){
+									if(err) return error(res, err);
+									if(!cookie_obj.hasOwnProperty('token_id')) return error(res, 'missing auth params');
+									if(!cookie_obj.hasOwnProperty('public_token')) return error(res, 'missing auth params');
+									var args = Object.assign(post_obj, cookie_obj, { resource_id: 'r-mt/inspect-sprint' });
+									inspectSprintInteractor(data, config, args, ext, function(err, confirm_args){
+										confirm_args.Title = swapObjForName(data.name_data, confirm_args.sprint_obj);
+										swapIdForName(data.name_data, confirm_args.result_arr, function(err, swapped_data){
+											confirm_args.Objects = swapped_data;
+											displayTemplate(res, 'Blog retrieved', 'blog.html', confirm_args);
+										}, data.engagement_data);
+									})
+								});
+							} else {
+								error(res, 'need sprint_id to access sprint');
+							}
+							break;
+						case 'open-sprint-v1.2':
+							console.log('sprint data received: ', JSON.stringify(post_obj));
+							res.end('got it');
+							break;
 						default:
+							console.log(post_obj.form_id);
 							error(res, 'can\'t find route to match form_id');
 					}
 				});
@@ -634,26 +678,65 @@ var server = http.createServer(function(req, res){
 			});
 			break;
 		default:
-			res.end('bad request');
+			res.write("<html><form action='/home' method='post'>");
+			res.write("<input type='hidden' name='sprint_id' value='s0' />");
+			res.write("<input type='hidden' name='form_id' value='inspect-sprint-v1.2' />");
+			res.write("<input type='submit' value='get sprint' />");
+			res.write("</form></html>");
+			res.end();
 	}
 }).listen(process.env.PORT || 3001, function(){
 	console.log('simple-motivation-therapy is running on 3001');
 });
 
-function swapIdForName(name_data, args_data, cb){
+function swapIdForName(name_data, args_data, cb, engagement_data){
 	var swapped_data = args_data.map((obj)=>{
-		var swapped_obj = {}
-		for (var prop in obj) {
-			var uni_obj = name_data.find((item)=>{
-				return (item.universal_id == obj[prop])
-			})
-			if(typeof uni_obj != 'undefined'){
-				swapped_obj[prop] = uni_obj.universal_name;
-			} else {
-				swapped_obj[prop] = obj[prop];
-			}
+		var swapped_obj = swapObjForName(name_data, obj);
+		if(typeof engagement_data != 'undefined' && swapped_obj.hasOwnProperty('engagement_id')){
+			swapped_obj = swapEngagementForDate(engagement_data, swapped_obj);
 		}
 		return swapped_obj;
 	});
 	return cb(null, swapped_data);
+}
+
+function swapObjForName(name_data, single_obj){
+	var swapped_obj = {};
+	for (prop in single_obj){
+		var uni_obj = name_data.find((item)=>{
+			return (item.universal_id == single_obj[prop])
+		});
+		
+		if(typeof uni_obj != 'undefined'){
+			swapped_obj[prop] = uni_obj.universal_name;
+		} else {
+			swapped_obj[prop] = single_obj[prop];
+		}
+
+	}
+	return swapped_obj;
+}
+
+function swapEngagementForDate(engagement_data, single_obj){
+	if(single_obj.hasOwnProperty('engagement_id')){
+		var uni_obj = engagement_data.find((item)=>{
+			
+			return (item.engagement_id == single_obj.engagement_id)
+		});
+		if(typeof uni_obj != 'undefined'){
+			var swapped_obj = {};
+			for(prop in single_obj){
+				if(prop == 'engagement_id'){
+					var date_obj = new Date(uni_obj.date);
+					var date_str = date_obj.toLocaleString('en-us', {year: 'numeric', month: 'long', day: 'numeric' });
+					swapped_obj[prop] = date_str;
+				} else {
+					swapped_obj[prop] = single_obj[prop];
+				}	
+			}
+			return swapped_obj;
+		} else {
+			return single_obj
+		}
+	}
 }

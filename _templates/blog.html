@@ -2,32 +2,23 @@
 <head>
   <script>{{{cookie_script}}}</script>
   <meta charset="utf-8">
-  <!--<script src="./build/react.min.js"></script>-->
-  <!--<script src="./build/react-dom.min.js"></script>-->
-  <!--<script src="./build/browser.min.js"></script>-->
   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 	<style>
+    
 		#wrapper {
 			margin-top: 20px;
       display: flex;
       flex-direction: column;
-			/*
-			border: 1px solid gray;
-			border-radius: 3px;
-			padding: 3px;*/
+			
 		}
 		html,
 body {
   overflow-x: hidden; /* Prevent scroll on narrow devices */
-}
-
-body {
   padding-top: 56px;
 }
-
 @media (max-width: 767.98px) {
   .offcanvas-collapse {
     position: fixed;
@@ -49,14 +40,17 @@ body {
     transform: translateX(-1rem); /* Account for horizontal padding on navbar */
   }
 }
-
+@media (min-width: 800px) {
+  .custom-container {
+    width: 600px;
+  }
+}
 .nav-scroller {
   position: relative;
   z-index: 2;
   height: 2.75rem;
   overflow-y: hidden;
 }
-
 .nav-scroller .nav {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -71,91 +65,32 @@ body {
   white-space: nowrap;
   -webkit-overflow-scrolling: touch;
 }
-
 .nav-underline .nav-link {
   padding-top: .75rem;
   padding-bottom: .75rem;
   font-size: .875rem;
   color: var(--secondary);
 }
-
 .nav-underline .nav-link:hover {
   color: var(--blue);
 }
-
 .nav-underline .active {
   font-weight: 500;
   color: var(--gray-dark);
 }
-
 .text-white-50 { color: rgba(255, 255, 255, .5); }
-
 .bg-purple { background-color: #435d7d; }
-
 .border-bottom { border-bottom: 1px solid #e5e5e5; }
-
 .box-shadow { box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05); }
-
 .lh-100 { line-height: 1; }
 .lh-125 { line-height: 1.25; }
 .lh-150 { line-height: 1.5; }
-
 .custom {
     width: 42px !important;
 }
 .icon {
   fill: gray;
 }
-
-/*
- * Dummy devices (replace them with your own or something else entirely!)
- */
-
-.product-device {
-  position: absolute;
-  right: 12%;
-  bottom: 5%;
-  width: 100px;
-  height: 240px;
-  
-  border: solid #333;
-  border-width: 0 30px 30px 0;
-  -webkit-transform: rotate(45deg);
-  transform: rotate(45deg);
-
-  /*content: '';
-    position: absolute;
-    left: 6px;
-    top: 3px;
-    width: 6px;
-    height: 11px;
-    border: solid #000;
-    border-width: 0 3px 3px 0;
-    transform: inherit;
-    z-index: 3;
-    transform: rotateZ(45deg);*/
-}
-
-.product-device::before {
-  position: absolute;
-  top: 10%;
-  right: 10px;
-  bottom: 10%;
-  left: 10px;
-  content: "";
-  background-color: rgba(255, 255, 255, .1);
-  border-radius: 5px;
-}
-
-.product-device-2 {
-  top: -25%;
-  right: auto;
-  bottom: 0;
-  left: 5%;
-  background-color: #e5e5e5;
-}
-
-
   /*
    * Footer
    */
@@ -168,6 +103,7 @@ body {
     line-height: 60px; /* Vertically center the text there */
     background-color: #f5f5f5;
   }
+  li {list-style-type: none;}
 	</style>
 </head>
 <body>
@@ -180,25 +116,28 @@ body {
 
       <div class="collapse navbar-collapse" id="navbarsExampleDefault">
         <ul class="navbar-nav mr-auto">
-          {{#Items}}
-          <li class="nav-item {{active}}">
-            <a class="nav-link" href="{{link}}">{{value}}{{{sr}}}</a>
+          <li class="nav-item active">
+            <a class="nav-link" href="/home">Home<span class="sr-only">(current)</span></a>
           </li>
-          {{/Items}}
+          <li class="nav-item">
+            <a class="nav-link" href="/browse">Browse</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/pricing">Show Support!</a>
+          </li>
         </ul>
-        <form class="form-inline my-2 my-lg-0" action='/api/search-goal' method='post'>
-          <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search" name='term_str'>
-          <button class="btn btn-outline-success my-2 my-sm-0 mr-sm-2" type="submit">Search</button>
-        </form>
-        <form class="form-inline my-2 my-lg-0" action='/documentation'>
-          <button class="btn btn-outline-secondary my-2 my-sm-0 mr-sm-2 custom" type="submit">?</button>
-        </form>
+        
+        <div class="form-inline my-2 my-lg-0" >
+          <button id='?' class="btn btn-outline-secondary my-2 my-sm-0 mr-sm-2 custom"
+          data-toggle='modal' data-target='#badgeModal' onclick="removeFlasher()">?</button>
+        </div>
         <div class="form-inline my-2 my-lg-0">
-          <button class="btn btn-outline-secondary my-2 my-sm-0 mr-sm-2 custom" type="submit" data-toggle="dropdown">
+          <button class="btn btn-outline-secondary my-2 my-sm-0 mr-sm-2 custom"  data-toggle="dropdown">
            &#9776;
           </button>
           
             <div class="dropdown-menu dropdown-menu-right float-right" style="position:absolute;">
+              <a class="dropdown-item" href="/easter-egg">Toggle-Mode</a>
               <a class="dropdown-item" href="/logout">Logout</a>
               <button class="dropdown-item" data-toggle="modal" data-target="#deactivateModal">Deactivate Account</button>
             </div>
@@ -207,15 +146,34 @@ body {
       </div>
     </nav>
 
-    <main class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center bg-light">
-      <div class="product-device d-none d-md-block"></div>
-      
-      <div class="col-md-5 p-lg-5 mx-auto my-5">
-        <h1 class="display-4 font-weight-normal">Intentionality</h1>
-        <p class="lead font-weight-normal">(noun) the fact of being deliberate or purposive.</p>
-        <button class="btn btn-outline-secondary" data-toggle="modal" data-target="#OpenSprintModal">What is your purpose?</button>
+    <main role="main" class="container">
+      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h1">{{Title.sprint_id}}</h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+          <div class="btn-group mr-2">
+            <button type="button" class="btn btn-sm btn-outline-secondary">Close Sprint</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary">Analyze Progress</button>
+          </div>
+          <button type="button" class="btn btn-sm btn-outline-secondary">
+            <a href='index2'>Add Post</a>
+            <span class="badge badge-secondary">{{article_total}}</span>
+          </button>
+        </div>
       </div>
-      
+      {{#Objects}}
+      <div class="blog-post custom-container">
+        <h3 class="blog-post-title h3">{{article_id}}</h3>    
+        <div class='d-flex justify-content-between'>
+          <p class="blog-post-meta"><span class='text-secondary font-italic'>{{engagement_id}}</span> by <a href="#">{{Title.cred_id}}</a></p>
+          <div class='d-flex'>
+            <span>{{Title.kpi}}:</span>
+            <span>{{metric}}</span>
+          </div>
+        </div>
+        <hr class='mt-0'>
+        <p>{{article_description}}</p>
+      </div><!-- /.blog-post -->
+    {{/Objects}}
     </main>
 
    <footer class="footer">
@@ -224,46 +182,7 @@ body {
       </div>
     </footer>
   </div>
-  <!-- Modal -->
-    <div class="modal fade" id="OpenSprintModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Open Sprint</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <form action='/home' method='post'>
-            <div class="modal-body">
-              <div class="form-group">
-                <label for="sprintInput">Sprint Name</label>
-                <input type="text" class="form-control" name="sprintInput" aria-describedby="goalHelp" placeholder="Enter Sprint Name">
-                
-                <small id="goalHelp" class="form-text text-muted">Enter a short sprint name</small>
-              </div>
-              <div class="form-group">
-                <label for="metricInput">KPI</label>
-                <input type="text" class="form-control" name="metricInput" aria-describedby="goalHelp" placeholder="Enter a Metric">
-                <small id="goalHelp" class="form-text text-muted">KPI stands for Key Performance Indicator</small>
-              </div>
 
-              <div class="form-group">
-                <label for="articleInput">Sprint Plan</label>
-                <textarea class="form-control" name="articleInput" aria-describedby="goalHelp"></textarea>
-                <small id="goalHelp" class="form-text text-muted">Enter a short plan to push your metric in the right direction</small>
-              </div>
-            </div>
-            <div class="modal-footer">
-              
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-              <input type='hidden' name="form_id" value='open-sprint-v1.2' />
-              <button type="submit" class="btn btn-primary">Open Sprint</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
   <!-- Modal -->
   <div class="modal fade" id="deactivateModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -291,7 +210,30 @@ body {
       </div>
     </div>
   </div>
-    
-  
+
+  <!-- Modal -->
+  <div class="modal fade" id="badgeModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Badges Earned</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class='d-flex justify-content-center' style='margin-left: -30px'>
+          <ul class='text-left'>
+            {{#badges}}
+            <li><span class="badge badge-secondary">
+              <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 8 8" fill="whitesmoke">
+                <path d="{{vector}}" transform="translate(0 1)" />
+              </svg>
+            </span>&nbsp;{{badge_id}}</li>
+            {{/badges}}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
 <body>
 </html>
