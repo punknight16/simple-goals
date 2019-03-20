@@ -493,7 +493,7 @@ var server = http.createServer(function(req, res){
 								var token_str = args.token_obj.token_id+'.'+args.token_obj.public_token+'.'+args.token_obj.cred_id;
 								args.cookie_script = 'document.cookie = "token='+token_str+'; path=/";';
 								args.Items = args.menu_items;
-								displayTemplate(res, 'Registration Successful', 'help.html', args);
+								displayTemplate(res, 'Registration Successful', 'open.html', args);
 							});
 							break;
 						case 'bookmark-v1.1':
@@ -546,6 +546,34 @@ var server = http.createServer(function(req, res){
 									
 									if(err) return error(res, err);
 								
+									confirm_args.cookie_script = '';
+									confirm_args.Items = confirm_args.menu_items;
+									confirm_args.page_arr = new Array(confirm_args.link_pages).fill({a:1}).map((item, index)=>{ 
+										item = {};
+										item.active = '';
+										if((confirm_args.link_cursor-1)==index){
+											item.active = 'active'
+										}
+										item.index = index+1;
+										return item;
+									});
+							
+									var sorted_links = confirm_args.link_arr.sort((a, b)=>{return a.priority-b.priority});
+									swapIdForName(data.name_data, sorted_links, function(err, swapped_data){
+										confirm_args.Objects = swapped_data;
+										displayTemplate(res, 'Goal added', 'home.html', confirm_args);
+									});
+								});
+							});
+							break;
+						case 'add-sprint-v1.1':
+							receiveCookieData(req, function(err, cookie_obj){
+								if(err) return error(res, err);
+								if(!cookie_obj.hasOwnProperty('token_id')) return error(res, 'missing auth params');
+								if(!cookie_obj.hasOwnProperty('public_token')) return error(res, 'missing auth params');
+								var args = Object.assign(post_obj, cookie_obj, { resource_id: 'r-mt/add-goal' });
+								addSprintInteractor(data, config, args, ext, function(err, confirm_args){
+									if(err) return error(res, err);
 									confirm_args.cookie_script = '';
 									confirm_args.Items = confirm_args.menu_items;
 									confirm_args.page_arr = new Array(confirm_args.link_pages).fill({a:1}).map((item, index)=>{ 

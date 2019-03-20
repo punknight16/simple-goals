@@ -6,6 +6,7 @@ function receivePostData (req, cb){
 	});
 	req.on('end', function(){
 		post_str = post_str.replace(/%5B(\d+)%5D/g, "[$1]");
+		post_str = post_str.replace(/%40/g, "@");
 		post_str = post_str.replace(/\+/g, " ");
 		var post_obj = {};
 		if(post_str == ''){
@@ -22,13 +23,13 @@ function receivePostData (req, cb){
 					
 					post_obj[parse[0]] = parse[1];
 				});
-				console.log('hang C, post_obj: ', post_obj);
+				
 				return cb(null, post_obj);
 			} catch(e) {
 				console.log(e);
 				return cb(e)
 			} finally {
-				console.log('this should work');
+				//
 				
 			}
 			

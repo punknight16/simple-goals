@@ -1,0 +1,294 @@
+<html>
+<head>
+  <script>{{{cookie_script}}}</script>
+  <meta charset="utf-8">
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+	<style>
+    
+		#wrapper {
+			margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+			
+		}
+		html,
+body {
+  overflow-x: hidden; /* Prevent scroll on narrow devices */
+  padding-top: 56px;
+}
+
+@media (max-width: 767.98px) {
+  .offcanvas-collapse {
+    position: fixed;
+    top: 56px; /* Height of navbar */
+    bottom: 0;
+    width: 100%;
+    padding-right: 1rem;
+    padding-left: 1rem;
+    overflow-y: auto;
+    background-color: var(--gray-dark);
+    transition: -webkit-transform .3s ease-in-out;
+    transition: transform .3s ease-in-out;
+    transition: transform .3s ease-in-out, -webkit-transform .3s ease-in-out;
+    -webkit-transform: translateX(100%);
+    transform: translateX(100%);
+  }
+  .offcanvas-collapse.open {
+    -webkit-transform: translateX(-1rem);
+    transform: translateX(-1rem); /* Account for horizontal padding on navbar */
+  }
+}
+
+.nav-scroller {
+  position: relative;
+  z-index: 2;
+  height: 2.75rem;
+  overflow-y: hidden;
+}
+
+.nav-scroller .nav {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: nowrap;
+  flex-wrap: nowrap;
+  padding-bottom: 1rem;
+  margin-top: -1px;
+  overflow-x: auto;
+  color: rgba(255, 255, 255, .75);
+  text-align: center;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+}
+
+.nav-underline .nav-link {
+  padding-top: .75rem;
+  padding-bottom: .75rem;
+  font-size: .875rem;
+  color: var(--secondary);
+}
+
+.nav-underline .nav-link:hover {
+  color: var(--blue);
+}
+
+.nav-underline .active {
+  font-weight: 500;
+  color: var(--gray-dark);
+}
+
+.text-white-50 { color: rgba(255, 255, 255, .5); }
+
+.bg-purple { background-color: #435d7d; }
+
+.border-bottom { border-bottom: 1px solid #e5e5e5; }
+
+.box-shadow { box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05); }
+
+.lh-100 { line-height: 1; }
+.lh-125 { line-height: 1.25; }
+.lh-150 { line-height: 1.5; }
+
+.custom {
+    width: 42px !important;
+}
+.icon {
+  fill: gray;
+}
+
+
+
+
+  /*
+   * Footer
+   */
+  .footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    /* Set the fixed height of the footer here */
+    height: 60px;
+    line-height: 60px; /* Vertically center the text there */
+    background-color: #f5f5f5;
+  }
+  li {list-style-type: none;}
+	</style>
+</head>
+<body>
+  <div class="cover-container d-flex h-100 p-0 mx-auto flex-column">
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+      <a class="navbar-brand" href="/">Motivation Therapy</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>     
+
+      <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+        <ul class="navbar-nav mr-auto">
+          {{#Items}}
+          <li class="nav-item {{active}}">
+            <a class="nav-link" href="{{link}}">{{value}}{{{sr}}}</a>
+          </li>
+          {{/Items}}
+        </ul>
+        <form class="form-inline my-2 my-lg-0" action='/browse' method='post'>
+          <input type='hidden' name='form_id' value='search-v1.1' />
+          <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search" name='term_str'>
+          <button class="btn btn-outline-success my-2 my-sm-0 mr-sm-2" type="submit">Search</button>
+        </form>
+        <form class="form-inline my-2 my-lg-0" action='/documentation'>
+          <button class="btn btn-outline-secondary my-2 my-sm-0 mr-sm-2 custom" type="submit">?</button>
+        </form>
+        <div class="form-inline my-2 my-lg-0">
+          <button class="btn btn-outline-secondary my-2 my-sm-0 mr-sm-2 custom" type="submit" data-toggle="dropdown">
+           &#9776;
+          </button>
+          
+            <div class="dropdown-menu dropdown-menu-right float-right" style="position:absolute;">
+              <a class="dropdown-item" href="/logout">Logout</a>
+              <button class="dropdown-item" data-toggle="modal" data-target="#deactivateModal">Deactivate Account</button>
+            </div>
+          
+        </div>
+      </div>
+    </nav>
+
+    <div class="container">
+      <div class="py-5 text-center">
+        <h2>Start Your First Goal</h2>
+        <p class="lead">
+        Acting intentionally toward accomplishing ONE goal is the key to success. The easiest way to act intentionally is by keeping a blog or journal about your plans and progress. This means defining a metric to measure how well you are doing, and then executing a plan to push that metric in the right direction.  </p>
+      </div>
+      <div class="row">
+        <div class="col-md-8 order-md-1">
+          <h4 class="mb-3">Goal Heading</h4>
+          <form action='/home' method='post'>
+            <div class="mb-3">
+              <label for="username">Goal Title</label>
+              <div class="input-group">
+                <input type="text" class="form-control" name="sprint_title" placeholder="" required>
+                <div class="invalid-feedback" style="width: 100%;">
+                  Your sprint title is required.
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-5 mb-3">
+                <label for="metric">Unit of Measurement</label>
+                <input class="form-control d-block w-100" type='text' name='metric' required>
+                <small id="metricHelp" class="form-text text-muted">
+                  Provide a metric to track your growth
+                </small>
+              </div>
+              <div class="col-md-3 mb-3">
+                <label for="value">Value at T<small>0</small></label>
+                <input class="form-control d-block w-100" type='number' name='value' required>
+                <small id="initialValueHelp" class="form-text text-muted">
+                  Initial value
+                </small>
+              </div>
+              <div class="col-md-3 mb-3">
+                <label for="value">Value at T<small>n</small></label>
+                <input class="form-control d-block w-100" type='number' name='value' required>
+                <small id="finalValueHelp" class="form-text text-muted">
+                  Target value
+                </small>
+              </div>
+            </div>
+            <hr />
+            <h4 class="mb-3">When will you record your progress?</h4>
+            <div class="row">
+              <div class="col-md-3 mb-3">
+                <label for="when">Frequency</label>
+                <select class="custom-select d-block w-100" id="frequency" required>
+                  <option value="">Choose...</option>
+                  <option>Daily</option>
+                  <option>Weekly</option>
+                  <option>Monthly</option>
+                </select>
+                <div class="invalid-feedback">
+                  Please select a valid frequency.
+                </div>
+              </div>
+              <div class="col-md-4 mb-3">
+                <label for="when">Starting</label>
+                <div class="input-group">
+                  <input type="date" class="form-control d-block w-50" name="date" required>
+                  <div class="invalid-feedback" style="width: 100%;">
+                    The date is required.
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4 mb-3">
+                <label for="when">Time</label>
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">@</span>
+                  </div>
+                  <input type="time" class="form-control" name="time" required>
+                  <div class="invalid-feedback" style="width: 100%;">
+                    The time is required.
+                  </div>
+                </div>
+              </div>
+            </div>
+            <hr class="mb-4">
+            <h4 class="mb-3">What is your plan to succeed?</h4>
+            <div class="mb-3">
+              <label for="username">Article Title</label>
+              
+                <input type="text" class="form-control" name="article_title" placeholder="" required>
+                <small id="titleHelp" class="form-text text-muted">
+                  Give your plan a title
+                </small>
+              
+              
+            </div>
+            <div class="form-group">
+                <label for="exampleFormControlTextarea1">Article Body</label>
+                <textarea class="form-control" name="article_body" rows="4" placeholder='write out your plan'></textarea>
+                <small id="articleHelp" class="form-text text-muted">
+                  use #'s and @'s to make your plan more searchable
+                </small>
+              </div>
+            <input type='hidden' name='form_id' value='open' />
+            <button class="btn btn-primary btn-lg btn-block" type="submit">Start This Goal</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="deactivateModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Deactivate Account</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form action='/deactivate-account' method='post'>
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="emailInput">Email Confirmation</label>
+              <input type="text" class="form-control" name="emailInput" aria-describedby="goalHelp" placeholder="Enter email">
+              <input type='hidden' name="form_id" value='deactivate-account-v1.1' />
+              <small id="deactivateHelp" class="form-text text-muted">Enter your email to confirm account deactivation</small>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Deactivate Account</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  
+<body>
+</html>
