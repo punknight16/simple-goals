@@ -196,6 +196,8 @@ ext.removePermissionObj = require('./_scripts/remove-permission-obj');
 ext.listCredObj = require('./_scripts/list-cred-obj');
 ext.listEngagementObj = require('./_scripts/list-engagement-obj');
 ext.getSprintObj = require('./_scripts/get-sprint-obj');
+ext.addSprintObj = require('./_scripts/add-sprint-obj');
+ext.addArticleObj = require('./_scripts/add-article-obj');
 
 if(process.env.NODE_ENV=='dev'){
 	console.log('running dev environment');
@@ -646,7 +648,22 @@ var server = http.createServer(function(req, res){
 							break;
 						case 'open-sprint-v1.2':
 							console.log('sprint data received: ', JSON.stringify(post_obj));
-							res.end('got it');
+							
+
+							if(post_obj.hasOwnProperty('link_index')){
+								receiveCookieData(req, function(err, cookie_obj){
+									if(err) return error(res, err);
+									if(!cookie_obj.hasOwnProperty('token_id')) return error(res, 'missing auth params');
+									if(!cookie_obj.hasOwnProperty('public_token')) return error(res, 'missing auth params');
+									var args = Object.assign(post_obj, cookie_obj, { resource_id: 'r-mt/open-sprint' });
+									openSprintInteractor(data, config, args, ext, function(err, confirm_args){
+										confirm_args.Title = swapObjForName(data.name_data, confirm_args.link_obj);
+										displayTemplate(res, 'Sprint Opened', 'blog.html', confirm_args);
+									})
+								});
+							} else {
+								error(res, 'need a link_index to update');
+							}
 							break;
 						default:
 							console.log(post_obj.form_id);

@@ -242,10 +242,21 @@ body {
                 
                 <small id="goalHelp" class="form-text text-muted">Enter a short sprint name</small>
               </div>
-              <div class="form-group">
-                <label for="metricInput">KPI</label>
-                <input type="text" class="form-control" name="metricInput" aria-describedby="goalHelp" placeholder="Enter a Metric">
-                <small id="goalHelp" class="form-text text-muted">KPI stands for Key Performance Indicator</small>
+              <div class="row">
+                <div class="col-md-5 mb-3">
+                  <label for="metric">Unit of Measurement</label>
+                  <input class="form-control d-block w-100" type='text' name='metric' required>
+                  <small id="metricHelp" class="form-text text-muted">
+                    Metric to track your growth
+                  </small>
+                </div>
+                <div class="col-md-3 mb-3">
+                  <label for="value">Value at T<small>0</small></label>
+                  <input class="form-control d-block w-100" type='number' name='value' required>
+                  <small id="initialValueHelp" class="form-text text-muted">
+                    Initial value
+                  </small>
+                </div>
               </div>
 
               <div class="form-group">
@@ -257,6 +268,7 @@ body {
             <div class="modal-footer">
               
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <input type='hidden' name="link_index" value='{{link_index}}' />
               <input type='hidden' name="form_id" value='open-sprint-v1.2' />
               <button type="submit" class="btn btn-primary">Open Sprint</button>
             </div>

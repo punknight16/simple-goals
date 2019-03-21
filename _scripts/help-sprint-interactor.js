@@ -10,7 +10,8 @@ function helpSprintInteractor(data, config, args, ext, cb){
 		
 		return cb(null, {
 			menu_items: menu_obj.menu_items,
-			link_obj: config.client_cache[cred_id].link_arr[args.index]
+			link_obj: config.client_cache[cred_id].link_arr[args.index],
+			link_index: args.index
 		});
 	});
 	
