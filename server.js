@@ -20,6 +20,7 @@ var listUserInteractor = require('./_scripts/list-user-interactor');
 var inspectSprintInteractor = require('./_scripts/inspect-sprint-interactor');
 var helpSprintInteractor = require('./_scripts/help-sprint-interactor');
 var openSprintInteractor = require('./_scripts/open-sprint-interactor');
+var addArticleInteractor = require('./_scripts/add-article-interactor');
 
 var error = function(res, err_msg){
 	console.log(JSON.stringify(err_msg));
@@ -62,6 +63,7 @@ var data = {
 		{cred_id: 'cred-0vndq7krkn6o', resource_id:'r-mt/bookmark-goal', universal_id: 'cred-0vndq7krkn6o'},
 		{cred_id: 'cred-0vndq7krkn6o', resource_id:'r-mt/inspect-sprint', universal_id: 'cred-0vndq7krkn6o'},
 		{cred_id: 'cred-0vndq7krkn6o', resource_id:'r-mt/open-sprint', universal_id: 'cred-0vndq7krkn6o'},
+		{cred_id: 'cred-0vndq7krkn6o', resource_id:'r-mt/add-article', universal_id: 'cred-0vndq7krkn6o'},
 		{cred_id: 'cred-0vndq7krkn6o', resource_id:'r-mt/list-goal-obj', universal_id: 'public'},
 		{cred_id: 'cred-0vndq7krkn6o', resource_id:'r-mt/logout', universal_id: 'public'}
 	],
@@ -97,10 +99,10 @@ var data = {
 	link_data: [
 		{cred_id: 'cred-0vndq7krkn6o', goal_id: 'g1', sprint_id: 's0', priority: 1, checked: ''},
 		{cred_id: 'cred-0vndq7krkn6o', goal_id: 'g2', sprint_id: null, priority: 2, checked: ''},
-		{cred_id: 'cred-0vndq7krkn6o', goal_id: 'g3', sprint_id: 's0', priority: 3, checked: ''},
-		{cred_id: 'cred-0vndq7krkn6o', goal_id: 'g4', sprint_id: 's0', priority: 4, checked: ''},
-		{cred_id: 'cred-0vndq7krkn6o', goal_id: 'g5', sprint_id: 's0', priority: 5, checked: ''},
-		{cred_id: 'cred-0vndq7krkn6o', goal_id: 'g6', sprint_id: 's0', priority: 6, checked: ''}
+		{cred_id: 'cred-0vndq7krkn6o', goal_id: 'g3', sprint_id: null, priority: 3, checked: ''},
+		{cred_id: 'cred-0vndq7krkn6o', goal_id: 'g4', sprint_id: null, priority: 4, checked: ''},
+		{cred_id: 'cred-0vndq7krkn6o', goal_id: 'g5', sprint_id: null, priority: 5, checked: ''},
+		{cred_id: 'cred-0vndq7krkn6o', goal_id: 'g6', sprint_id: null, priority: 6, checked: ''}
 	],
 	menu_data: [
 		{menu_id: 'menu-0', menu_items: [
@@ -200,6 +202,7 @@ ext.listEngagementObj = require('./_scripts/list-engagement-obj');
 ext.getSprintObj = require('./_scripts/get-sprint-obj');
 ext.addSprintObj = require('./_scripts/add-sprint-obj');
 ext.addArticleObj = require('./_scripts/add-article-obj');
+ext.editSprintObj = require('./_scripts/edit-sprint-obj');
 
 if(process.env.NODE_ENV=='dev'){
 	console.log('running dev environment');
@@ -629,6 +632,7 @@ var server = http.createServer(function(req, res){
 									if(!cookie_obj.hasOwnProperty('public_token')) return error(res, 'missing auth params');
 									var args = Object.assign(post_obj, cookie_obj, { resource_id: 'r-mt/inspect-sprint' });
 									args.sprint_id = config.client_cache[args.cred_id].link_arr[args.index].sprint_id;
+									args.link_index = args.index;
 									if(args.sprint_id == null || typeof args.sprint_id == 'undefined'){
 										helpSprintInteractor(data, config, args, ext, function(err, confirm_args){
 											confirm_args.Title = swapObjForName(data.name_data, confirm_args.link_obj);
@@ -666,6 +670,43 @@ var server = http.createServer(function(req, res){
 								});
 							} else {
 								error(res, 'need a link_index to update');
+							}
+							break;
+						case 'add-article-v1.2':
+							console.log('post data: ', JSON.stringify(post_obj));
+							//create the article, a tag for each#, and update the sprint
+							if(post_obj.hasOwnProperty('articleInput') && post_obj.hasOwnProperty('link_index')){
+								//adding the article obj and updating the sprint_obj should be atomic
+								receiveCookieData(req, function(err, cookie_obj){
+									if(err) return error(res, err);
+									if(!cookie_obj.hasOwnProperty('token_id')) return error(res, 'missing auth params');
+									if(!cookie_obj.hasOwnProperty('public_token')) return error(res, 'missing auth params');
+									var args = Object.assign(post_obj, cookie_obj, { resource_id: 'r-mt/add-article' });
+									addArticleInteractor(data, config, args, ext, function(err, confirm_args){
+										confirm_args.Title = swapObjForName(data.name_data, confirm_args.sprint_obj);
+										swapIdForName(data.name_data, confirm_args.result_arr, function(err, swapped_data){
+											confirm_args.Objects = swapped_data;
+											displayTemplate(res, 'Article Added', 'blog.html', confirm_args);
+										}, data.engagement_data);
+									})
+								});
+								/*
+								//here is the tag stuff
+								var myRegexp = /#(\S+)/g, result;
+								var counter = 0;
+								while (result = myRegexp.exec(post_obj.text)) {
+								   var tag_obj = {
+								   	tag_name: result[1],
+								   	goal_id: sprint_obj.goal_id,  
+								   	sprint_id: post_obj.sprint_id, 
+								   	article_id: article_id
+								   }
+								   data.tag_data.push(tag_obj);
+								   counter++;
+								}*/
+								
+							} else {
+								error(res, 'need articleInput and link_index to add article');
 							}
 							break;
 						default:

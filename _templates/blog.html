@@ -154,14 +154,13 @@ body {
             <button type="button" class="btn btn-sm btn-outline-secondary">Close Sprint</button>
             <button type="button" class="btn btn-sm btn-outline-secondary">Analyze Progress</button>
           </div>
-          <button type="button" class="btn btn-sm btn-outline-secondary">
-            <a href='index2'>Add Post</a>
+          <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#ArticleModal"> Add Post
             <span class="badge badge-secondary">{{article_total}}</span>
           </button>
         </div>
       </div>
       {{#Objects}}
-      <div class="blog-post custom-container">
+      <div class="blog-post custom-container pb-3">
         <h3 class="blog-post-title h3">{{article_id}}</h3>    
         <div class='d-flex justify-content-between'>
           <p class="blog-post-meta"><span class='text-secondary font-italic'>{{engagement_id}}</span> by <a href="#">{{Title.cred_id}}</a></p>
@@ -182,6 +181,59 @@ body {
       </div>
     </footer>-->
   </div>
+
+  <!-- Modal -->
+    <div class="modal fade" id="ArticleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Add Journal Post</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <form action='/home' method='post'>
+            <div class="modal-body">
+              <div class="mb-3">
+                <label for="username">Post Title</label>
+                  <input type="text" class="form-control" name="articleName" placeholder="" required>
+                  <small id="titleHelp" class="form-text text-muted">
+                    Give your post a short title
+                  </small>
+              </div>
+              <div class="row">
+                <div class="col-md-5 mb-3">
+                  <label for="metric">Unit of Measurement</label>
+                  <input class="form-control d-block w-100" type='text' name='metric' value='{{Title.metric}}' required>
+                  <small id="metricHelp" class="form-text text-muted">
+                    Metric to track your growth
+                  </small>
+                </div>
+                <div class="col-md-3 mb-3">
+                  <label for="value">Value</label>
+                  <input class="form-control d-block w-100" type='number' name='value' required>
+                  <small id="initialValueHelp" class="form-text text-muted">
+                    as of Today
+                  </small>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="articleInput">Post Description</label>
+                <textarea class="form-control" name="articleInput" aria-describedby="goalHelp"></textarea>
+                <small id="goalHelp" class="form-text text-muted">Describe the Milestones you have hit, obstacles, and plans moving forward.</small>
+              </div>
+            </div>
+            <div class="modal-footer">
+              
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <input type='hidden' name="link_index" value='{{link_index}}' />
+              <input type='hidden' name="form_id" value='add-article-v1.2' />
+              <button type="submit" class="btn btn-primary">Add Post</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
 
   <!-- Modal -->
   <div class="modal fade" id="deactivateModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -211,30 +263,7 @@ body {
     </div>
   </div>
 
-  <!-- Modal -->
-  <div class="modal fade" id="badgeModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Badges Earned</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class='d-flex justify-content-center' style='margin-left: -30px'>
-          <ul class='text-left'>
-            {{#badges}}
-            <li><span class="badge badge-secondary">
-              <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 8 8" fill="whitesmoke">
-                <path d="{{vector}}" transform="translate(0 1)" />
-              </svg>
-            </span>&nbsp;{{badge_id}}</li>
-            {{/badges}}
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
+ <!--end Modals-->
   <script>
   var all = document.getElementsByTagName("article");
 

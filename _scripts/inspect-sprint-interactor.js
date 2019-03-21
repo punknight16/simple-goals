@@ -28,7 +28,8 @@ function inspectSprintInteractor(data, config, args, ext, cb){
 		return cb(null, {
 			menu_items: menu_obj.menu_items,
 			result_arr: result_arr,
-			sprint_obj: sprint_obj
+			sprint_obj: sprint_obj,
+			link_index: args.link_index
 		});
 	});
 	
