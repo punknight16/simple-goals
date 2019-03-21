@@ -7,7 +7,8 @@ function addArticleObj(data, config, args, ext){
 		sprint_id: args.sprint_id,
 		article_id: args.article_id,
 		parent_id: (args.parent_id || null),
-		text: args.articleInput,
+		article_description: args.articleInput,
+		value: args.value,
 		engagement_id: args.engagement_id
 	}
 	ext.addObj(data.article_data, article_obj);

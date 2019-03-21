@@ -166,21 +166,21 @@ body {
         <div class='d-flex justify-content-between'>
           <p class="blog-post-meta"><span class='text-secondary font-italic'>{{engagement_id}}</span> by <a href="#">{{Title.cred_id}}</a></p>
           <div class='d-flex'>
-            <span>{{Title.kpi}}:</span>
-            <span>{{metric}}</span>
+            <span>{{Title.metric}}:</span>
+            <span>{{value}}</span>
           </div>
         </div>
         <hr class='mt-0'>
-        <p>{{article_description}}</p>
+        <article>{{article_description}}</article>
       </div><!-- /.blog-post -->
     {{/Objects}}
     </main>
 
-   <footer class="footer">
+    <!--<footer class="footer">
       <div class="container">
         <span class="text-muted">{{msg}}</span>
       </div>
-    </footer>
+    </footer>-->
   </div>
 
   <!-- Modal -->
@@ -235,5 +235,14 @@ body {
       </div>
     </div>
   </div>
+  <script>
+  var all = document.getElementsByTagName("article");
+
+  for (var i=0, max=all.length; i < max; i++) {
+    all[i].innerHTML = decodeURIComponent(all[i].innerHTML);
+  }
+    
+  </script>
+
 <body>
 </html>

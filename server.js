@@ -19,6 +19,7 @@ var deactivateAccountInteractor = require('./_scripts/deactivate-account-interac
 var listUserInteractor = require('./_scripts/list-user-interactor');
 var inspectSprintInteractor = require('./_scripts/inspect-sprint-interactor');
 var helpSprintInteractor = require('./_scripts/help-sprint-interactor');
+var openSprintInteractor = require('./_scripts/open-sprint-interactor');
 
 var error = function(res, err_msg){
 	console.log(JSON.stringify(err_msg));
@@ -60,6 +61,7 @@ var data = {
 		{cred_id: 'cred-0vndq7krkn6o', resource_id:'r-mt/search-goal', universal_id: 'public'},
 		{cred_id: 'cred-0vndq7krkn6o', resource_id:'r-mt/bookmark-goal', universal_id: 'cred-0vndq7krkn6o'},
 		{cred_id: 'cred-0vndq7krkn6o', resource_id:'r-mt/inspect-sprint', universal_id: 'cred-0vndq7krkn6o'},
+		{cred_id: 'cred-0vndq7krkn6o', resource_id:'r-mt/open-sprint', universal_id: 'cred-0vndq7krkn6o'},
 		{cred_id: 'cred-0vndq7krkn6o', resource_id:'r-mt/list-goal-obj', universal_id: 'public'},
 		{cred_id: 'cred-0vndq7krkn6o', resource_id:'r-mt/logout', universal_id: 'public'}
 	],
@@ -138,12 +140,12 @@ var data = {
 		]}
 	],
 	sprint_data: [
-		{sprint_id: 's0', article_id: 'a1', cred_id: 'cred-0vndq7krkn6o', goal_id: 'g1', kpi: 'revenue'}
+		{sprint_id: 's0', article_id: 'a1', cred_id: 'cred-0vndq7krkn6o', goal_id: 'g1', metric: 'revenue'}
 	],
 	article_data: [
-		{article_id: 'a0', parent_id: null, sprint_id: 's0', metric: '$100', engagement_id: 'e0', 
+		{article_id: 'a0', parent_id: null, sprint_id: 's0', value: '$100', engagement_id: 'e0', 
 			article_description: 'In order to get these guys, some money I plan to review all of the ways a blog typically monetizes and implement them one by one in a 2 week sprint cycle.'},
-		{article_id: 'a1', parent_id: 'a0', sprint_id: 's0', metric: '$400', engagement_id: 'e1', 
+		{article_id: 'a1', parent_id: 'a0', sprint_id: 's0', value: '$400', engagement_id: 'e1', 
 			article_description: 'I first attempted to monetize by getting advertisers interested in branded content on the website'}
 	],
 	sale_data: []
@@ -648,8 +650,6 @@ var server = http.createServer(function(req, res){
 							break;
 						case 'open-sprint-v1.2':
 							console.log('sprint data received: ', JSON.stringify(post_obj));
-							
-
 							if(post_obj.hasOwnProperty('link_index')){
 								receiveCookieData(req, function(err, cookie_obj){
 									if(err) return error(res, err);
@@ -657,8 +657,11 @@ var server = http.createServer(function(req, res){
 									if(!cookie_obj.hasOwnProperty('public_token')) return error(res, 'missing auth params');
 									var args = Object.assign(post_obj, cookie_obj, { resource_id: 'r-mt/open-sprint' });
 									openSprintInteractor(data, config, args, ext, function(err, confirm_args){
-										confirm_args.Title = swapObjForName(data.name_data, confirm_args.link_obj);
-										displayTemplate(res, 'Sprint Opened', 'blog.html', confirm_args);
+										confirm_args.Title = swapObjForName(data.name_data, confirm_args.sprint_obj);
+										swapIdForName(data.name_data, confirm_args.result_arr, function(err, swapped_data){
+											confirm_args.Objects = swapped_data;
+											displayTemplate(res, 'Sprint Opened', 'blog.html', confirm_args);
+										}, data.engagement_data);
 									})
 								});
 							} else {

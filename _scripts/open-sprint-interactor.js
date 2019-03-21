@@ -35,7 +35,31 @@ function openSprintInteractor(data, config, args, ext, cb){
 		//add article_obj
 		ext.addArticleObj(data, config, args, ext);
 		//add name_obj for article_obj
+		args.universal_id = args.article_id;
+		args.universal_name = args.articleName;
+		err = ext.addNameObj(data, config, args, ext);
+		if(err) return cb('failed to add name_obj');
 		//add engagement_obj
+		err = ext.addEngagementObj(data, config, args, ext);
+		if(err) return cb('failed to add engagement');
+		//prove it works
+		var sprint_obj = ext.getSprintObj(data.sprint_data, args.sprint_id, ext.getObj);
+		//get all articles associated with sprint_id;
+		var article_arr = data.article_data.filter((item)=>{
+			return (item.sprint_id == sprint_obj.sprint_id)
+		});
+		//start with initial article
+		var article_id = sprint_obj.article_id;
+		var result_arr = [];
+		for (var i = article_arr.length - 1; i >= 0; i--) {
+			var article_obj = article_arr.find((item)=>{
+				return (item.article_id== article_id);
+			})
+			article_id = article_obj.parent_id;
+			result_arr.push(article_obj);
+		};
+
+		//store
 		config.update_needed = true;
 		return cb(null, {
 			menu_items: menu_obj.menu_items,

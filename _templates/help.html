@@ -237,10 +237,10 @@ body {
           <form action='/home' method='post'>
             <div class="modal-body">
               <div class="form-group">
-                <label for="sprintInput">Sprint Name</label>
-                <input type="text" class="form-control" name="sprintInput" aria-describedby="goalHelp" placeholder="Enter Sprint Name">
+                <label for="sprintInput">Sprint Title</label>
+                <input type="text" class="form-control" name="sprintInput" aria-describedby="goalHelp" placeholder="Enter Sprint Title">
                 
-                <small id="goalHelp" class="form-text text-muted">Enter a short sprint name</small>
+                <small id="goalHelp" class="form-text text-muted">Enter a short sprint title</small>
               </div>
               <div class="row">
                 <div class="col-md-5 mb-3">
@@ -258,9 +258,16 @@ body {
                   </small>
                 </div>
               </div>
+              <div class="mb-3">
+                <label for="username">Short Plan Description</label>
+                  <input type="text" class="form-control" name="articleName" placeholder="" required>
+                  <small id="titleHelp" class="form-text text-muted">
+                    Give your plan a name
+                  </small>
+              </div>
 
               <div class="form-group">
-                <label for="articleInput">Sprint Plan</label>
+                <label for="articleInput">In Depth Details and Milestones</label>
                 <textarea class="form-control" name="articleInput" aria-describedby="goalHelp"></textarea>
                 <small id="goalHelp" class="form-text text-muted">Enter a short plan to push your metric in the right direction</small>
               </div>
