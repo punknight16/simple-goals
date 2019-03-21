@@ -260,7 +260,13 @@ body {
             <tbody >
               {{#Objects}}
                 <tr class='border-top'>
-                  <td>{{goal_id}}</td>
+                  <td>
+                    <form class='mb-0' action='home' method='post'>
+                      <input type='hidden' name='sprint_id' value='s0' />
+                      <input type='hidden' name='form_id' value='inspect-sprint-v1.2' />
+                      <input class='btn btn-link p-0' type='submit' value='{{goal_id}}' />
+                    </form>
+                  </td>
                   <td></td>
                   <td class="d-flex justify-content-end border-top-0">
                     <span class="custom-checkbox">
@@ -461,7 +467,13 @@ body {
             <tbody >
               {{#Objects}}
                 <tr className='border-top'>
-                  <td>{{goal_id}}</td>
+                  <td>
+                    <form className='mb-0' action='home' method='post'>
+                      <input type='hidden' name='index' value='{{index}}' />
+                      <input type='hidden' name='form_id' value='inspect-sprint-v1.2' />
+                      <input className='btn btn-link p-0' type='submit' value='{{goal_id}}' />
+                    </form>
+                  </td>
                   <td></td>
                   <td className="d-flex justify-content-end border-top-0">
                     <span className={this.state.check_arr[{{index}}].className || 'custom-checkbox'}>

@@ -18,6 +18,7 @@ var logoutInteractor = require('./_scripts/logout-interactor');
 var deactivateAccountInteractor = require('./_scripts/deactivate-account-interactor');
 var listUserInteractor = require('./_scripts/list-user-interactor');
 var inspectSprintInteractor = require('./_scripts/inspect-sprint-interactor');
+var helpSprintInteractor = require('./_scripts/help-sprint-interactor');
 
 var error = function(res, err_msg){
 	console.log(JSON.stringify(err_msg));
@@ -92,12 +93,12 @@ var data = {
 		{tag_name: 'career', goal_id: 'g1', sprint_id: 's0', article_id: 'a2'}
 	],
 	link_data: [
-		{cred_id: 'cred-0vndq7krkn6o', goal_id: 'g1', priority: 1, checked: ''},
-		{cred_id: 'cred-0vndq7krkn6o', goal_id: 'g2', priority: 2, checked: ''},
-		{cred_id: 'cred-0vndq7krkn6o', goal_id: 'g3', priority: 3, checked: ''},
-		{cred_id: 'cred-0vndq7krkn6o', goal_id: 'g4', priority: 4, checked: ''},
-		{cred_id: 'cred-0vndq7krkn6o', goal_id: 'g5', priority: 5, checked: ''},
-		{cred_id: 'cred-0vndq7krkn6o', goal_id: 'g6', priority: 6, checked: ''}
+		{cred_id: 'cred-0vndq7krkn6o', goal_id: 'g1', sprint_id: 's0', priority: 1, checked: ''},
+		{cred_id: 'cred-0vndq7krkn6o', goal_id: 'g2', sprint_id: null, priority: 2, checked: ''},
+		{cred_id: 'cred-0vndq7krkn6o', goal_id: 'g3', sprint_id: 's0', priority: 3, checked: ''},
+		{cred_id: 'cred-0vndq7krkn6o', goal_id: 'g4', sprint_id: 's0', priority: 4, checked: ''},
+		{cred_id: 'cred-0vndq7krkn6o', goal_id: 'g5', sprint_id: 's0', priority: 5, checked: ''},
+		{cred_id: 'cred-0vndq7krkn6o', goal_id: 'g6', sprint_id: 's0', priority: 6, checked: ''}
 	],
 	menu_data: [
 		{menu_id: 'menu-0', menu_items: [
@@ -617,19 +618,27 @@ var server = http.createServer(function(req, res){
 							break;
 						case 'inspect-sprint-v1.2':
 							//receive post data
-							if(post_obj.hasOwnProperty('sprint_id')){
+							if(post_obj.hasOwnProperty('index')){
 								receiveCookieData(req, function(err, cookie_obj){
 									if(err) return error(res, err);
 									if(!cookie_obj.hasOwnProperty('token_id')) return error(res, 'missing auth params');
 									if(!cookie_obj.hasOwnProperty('public_token')) return error(res, 'missing auth params');
 									var args = Object.assign(post_obj, cookie_obj, { resource_id: 'r-mt/inspect-sprint' });
-									inspectSprintInteractor(data, config, args, ext, function(err, confirm_args){
-										confirm_args.Title = swapObjForName(data.name_data, confirm_args.sprint_obj);
-										swapIdForName(data.name_data, confirm_args.result_arr, function(err, swapped_data){
-											confirm_args.Objects = swapped_data;
-											displayTemplate(res, 'Blog retrieved', 'blog.html', confirm_args);
-										}, data.engagement_data);
-									})
+									args.sprint_id = config.client_cache[args.cred_id].link_arr[args.index].sprint_id;
+									if(args.sprint_id == null || typeof args.sprint_id == 'undefined'){
+										helpSprintInteractor(data, config, args, ext, function(err, confirm_args){
+											confirm_args.Title = swapObjForName(data.name_data, confirm_args.link_obj);
+											displayTemplate(res, 'No Sprint', 'help.html', confirm_args);
+										})
+									} else {
+										inspectSprintInteractor(data, config, args, ext, function(err, confirm_args){
+											confirm_args.Title = swapObjForName(data.name_data, confirm_args.sprint_obj);
+											swapIdForName(data.name_data, confirm_args.result_arr, function(err, swapped_data){
+												confirm_args.Objects = swapped_data;
+												displayTemplate(res, 'Blog retrieved', 'blog.html', confirm_args);
+											}, data.engagement_data);
+										})
+									}
 								});
 							} else {
 								error(res, 'need sprint_id to access sprint');

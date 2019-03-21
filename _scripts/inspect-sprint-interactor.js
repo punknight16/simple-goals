@@ -4,7 +4,6 @@ function inspectSprintInteractor(data, config, args, ext, cb){
 	args.universal_id = sprint_obj.cred_id;
 
 	ext.authorizeRequest(data, config, args, ext, function(err, cred_id){
-		console.log("err in inspectSprintInteractor: ", err);
 		if(err) return cb(err);
 		args.cred_id = cred_id;
 		var menu_id = ext.getMenuIdFromPermission(data.permission_data, cred_id, ext.getPermissionObj, ext.getObj);
@@ -32,6 +31,7 @@ function inspectSprintInteractor(data, config, args, ext, cb){
 			sprint_obj: sprint_obj
 		});
 	});
+	
 }
 
 module.exports = inspectSprintInteractor;
