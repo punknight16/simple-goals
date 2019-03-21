@@ -631,6 +631,7 @@ var server = http.createServer(function(req, res){
 									if(!cookie_obj.hasOwnProperty('token_id')) return error(res, 'missing auth params');
 									if(!cookie_obj.hasOwnProperty('public_token')) return error(res, 'missing auth params');
 									var args = Object.assign(post_obj, cookie_obj, { resource_id: 'r-mt/inspect-sprint' });
+									
 									args.sprint_id = config.client_cache[args.cred_id].link_arr[args.index].sprint_id;
 									args.link_index = args.index;
 									if(args.sprint_id == null || typeof args.sprint_id == 'undefined'){

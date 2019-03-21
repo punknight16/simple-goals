@@ -8,6 +8,7 @@ function helpSprintInteractor(data, config, args, ext, cb){
 		var menu_obj = ext.getMenuObj(data.menu_data, menu_id, ext.getObj);
 		if(typeof menu_obj == 'undefined' || !menu_obj.hasOwnProperty('menu_items')) return cb('couldn\'t get menu_items');
 		
+		
 		return cb(null, {
 			menu_items: menu_obj.menu_items,
 			link_obj: config.client_cache[cred_id].link_arr[args.index],

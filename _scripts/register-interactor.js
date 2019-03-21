@@ -49,6 +49,17 @@ function registerInteractor(data, config, args, ext, cb){
 	args.resource_id = 'r-mt/add-goal'; 
 	args.universal_id = args.cred_id;
 	err = ext.addPermissionObj(data, config, args, ext);
+	//version 1.2 new permissions:
+	args.resource_id = 'r-mt/inspect-sprint'; 
+	args.universal_id = args.cred_id;
+	err = ext.addPermissionObj(data, config, args, ext);
+	args.resource_id = 'r-mt/open-sprint'; 
+	args.universal_id = args.cred_id;
+	err = ext.addPermissionObj(data, config, args, ext);
+	args.resource_id = 'r-mt/add-article'; 
+	args.universal_id = args.cred_id;
+	err = ext.addPermissionObj(data, config, args, ext);
+	//end version 1.2 new permissions
 	if(err) return cb('failed to add r-mt/add-goal permission_obj');
 	args.resource_id = 'r-mt/logout'; 
 	args.universal_id = 'public';
