@@ -16,14 +16,16 @@ function openSprintInteractor(data, config, args, ext, cb){
 		var menu_obj = ext.getMenuObj(data.menu_data, menu_id, ext.getObj);
 		if(typeof menu_obj == 'undefined' || !menu_obj.hasOwnProperty('menu_items')) return cb('couldn\'t get menu_items');
 		
+		console.log('link_data before: ', JSON.stringify(data.link_data));
 		//edit link_obj
 		var link_obj = config.client_cache[cred_id].link_arr[args.link_index];
-		
-
 		link_obj.sprint_id = args.sprint_id;
 		args.link_index = ext.editLinkObj(data.link_data, link_obj.goal_id, link_obj.cred_id, link_obj, ext.editObj)
 		if(typeof args.link_index == 'undefined') return cb('link couldn\'t be edited');
+		
+		console.log('link_data after: ', JSON.stringify(data.link_data));
 		//add sprint obj
+		args.goal_id = link_obj.goal_id;
 		err = ext.addSprintObj(data, config, args, ext);
 		if(err) return cb('couldn\'t add sprint');
 		//add name_obj for sprint

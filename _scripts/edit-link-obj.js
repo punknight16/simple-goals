@@ -1,4 +1,5 @@
 function editLinkObj(link_data, goal_id, cred_id, link_obj, editObj){
+	console.log('goal_id in editLinkObj: ', goal_id);
 	var link_params = {
 		goal_id: goal_id,
 		cred_id: cred_id

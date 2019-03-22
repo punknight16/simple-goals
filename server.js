@@ -405,8 +405,9 @@ var server = http.createServer(function(req, res){
 									item.index = index+1;
 									return item;
 								});
-								console.log('confirm_args for search: ', confirm_args);
-								swapIdForName(data.name_data, confirm_args.goal_arr, function(err, swapped_data){
+								//console.log('confirm_args for search: ', confirm_args);
+								var sorted_goals = confirm_args.goal_arr.sort((a, b)=>{return b.total_tags-a.total_tags});
+								swapIdForName(data.name_data, sorted_goals, function(err, swapped_data){
 									confirm_args.Objects = swapped_data;
 									displayTemplate(res, 'Found goals', 'goal.html', confirm_args);
 								});
@@ -435,7 +436,7 @@ var server = http.createServer(function(req, res){
 							item.index = index+1;
 							return item;
 						});
-						console.log('confirm_args for getHomeInteractor: ', confirm_args);
+						//console.log('confirm_args for getHomeInteractor: ', confirm_args);
 						var sorted_links = confirm_args.link_arr.sort((a, b)=>{return a.priority-b.priority});
 						swapIdForName(data.name_data, sorted_links, function(err, swapped_data){
 							confirm_args.Objects = swapped_data;
@@ -691,20 +692,7 @@ var server = http.createServer(function(req, res){
 										}, data.engagement_data);
 									})
 								});
-								/*
-								//here is the tag stuff
-								var myRegexp = /#(\S+)/g, result;
-								var counter = 0;
-								while (result = myRegexp.exec(post_obj.text)) {
-								   var tag_obj = {
-								   	tag_name: result[1],
-								   	goal_id: sprint_obj.goal_id,  
-								   	sprint_id: post_obj.sprint_id, 
-								   	article_id: article_id
-								   }
-								   data.tag_data.push(tag_obj);
-								   counter++;
-								}*/
+								
 								
 							} else {
 								error(res, 'need articleInput and link_index to add article');

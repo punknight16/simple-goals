@@ -7,6 +7,7 @@ function receivePostData (req, cb){
 	req.on('end', function(){
 		post_str = post_str.replace(/%5B(\d+)%5D/g, "[$1]");
 		post_str = post_str.replace(/\+/g, " ");
+		post_str = post_str.replace(/%23/g, "#");
 		var post_obj = {};
 		if(post_str == ''){
 			return cb('no post data');

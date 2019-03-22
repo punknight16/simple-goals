@@ -60,6 +60,24 @@ function addArticleInteractor(data, config, args, ext, cb){
 			result_arr.push(article_obj);
 		};
 
+		console.log('tag_data before: ', JSON.stringify(data.tag_data));
+
+		//here is the tag stuff
+		var myRegexp = /#(\S+)/g, result;
+		//var counter = 0;
+		while (result = myRegexp.exec(args.articleInput)) {
+		  var tag_obj = {
+		   	tag_name: result[1],
+		   	goal_id: sprint_obj.goal_id,  
+		   	sprint_id: args.sprint_id, 
+		   	article_id: args.article_id
+			}
+			data.tag_data.push(tag_obj);
+			//counter++;
+		}
+
+		console.log('tag_data after: ', JSON.stringify(data.tag_data));
+
 		//store
 		config.update_needed = true;
 		return cb(null, {
