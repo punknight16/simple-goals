@@ -233,7 +233,7 @@ body {
       </div>
     </nav>
 
-    <main role="main" class="container">
+    <main role="main" class="container mb-3">
 
       <div id="wrapper">
       	<div class="d-flex align-items-center p-3 text-white-50 bg-purple rounded-top box-shadow">
@@ -378,6 +378,15 @@ body {
         var  check_arr = new Array({{Objects.length}}).fill("{className: 'custom-checkbox', checked: 'false'}")
         return {check_arr: check_arr}
       },
+      componentDidMount: function(){
+        var all = document.getElementsByTagName("input");
+
+        for (var i=0, max=all.length; i < max; i++) {
+          if(all[i].type=='submit'){
+            all[i].value = decodeURIComponent(all[i].value);  
+          }
+        }
+      },
       update: function(num){
         var check_arr = this.state.check_arr;
         var index1 = check_arr.findIndex((item)=>{
@@ -471,7 +480,7 @@ body {
                     <form className='mb-0' action='home' method='post'>
                       <input type='hidden' name='index' value='{{index}}' />
                       <input type='hidden' name='form_id' value='inspect-sprint-v1.2' />
-                      <input className='btn btn-link p-0' type='submit' value='{{goal_id}}' />
+                      <input type='submit' className='btn btn-link p-0' value='{{goal_id}}' />
                     </form>
                   </td>
                   <td></td>
@@ -512,6 +521,15 @@ body {
         }
       });
     }
+  </script>
+
+  <script>/*
+  var all = document.getElementsByTagName("article");
+
+  for (var i=0, max=all.length; i < max; i++) {
+    all[i].innerHTML = decodeURIComponent(all[i].innerHTML);
+  }*/
+    
   </script>
 <body>
 </html>

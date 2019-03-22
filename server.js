@@ -60,6 +60,7 @@ var data = {
 	permission_data: [
 		{cred_id: 'cred-0vndq7krkn6o', resource_id:'r-mt/menu', universal_id: 'menu-2'},
 		{cred_id: 'cred-0vndq7krkn6o', resource_id:'r-mt/get-home', universal_id: 'cred-0vndq7krkn6o'},
+		{cred_id: 'cred-0vndq7krkn6o', resource_id:'r-mt/add-goal', universal_id: 'cred-0vndq7krkn6o'},
 		{cred_id: 'cred-0vndq7krkn6o', resource_id:'r-mt/priortize-home', universal_id: 'cred-0vndq7krkn6o'},
 		{cred_id: 'cred-0vndq7krkn6o', resource_id:'r-mt/search-goal', universal_id: 'public'},
 		{cred_id: 'cred-0vndq7krkn6o', resource_id:'r-mt/bookmark-goal', universal_id: 'cred-0vndq7krkn6o'},
