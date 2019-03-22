@@ -22,6 +22,7 @@ var helpSprintInteractor = require('./_scripts/help-sprint-interactor');
 var openSprintInteractor = require('./_scripts/open-sprint-interactor');
 var addArticleInteractor = require('./_scripts/add-article-interactor');
 var closeSprintInteractor = require('./_scripts/close-sprint-interactor');
+var intakeGoalInteractor = require('./_scripts/intake-goal-interactor');
 
 var error = function(res, err_msg){
 	console.log(JSON.stringify(err_msg));
@@ -523,7 +524,7 @@ var server = http.createServer(function(req, res){
 								var token_str = args.token_obj.token_id+'.'+args.token_obj.public_token+'.'+args.token_obj.cred_id;
 								args.cookie_script = 'document.cookie = "token='+token_str+'; path=/";';
 								args.Items = args.menu_items;
-								displayTemplate(res, 'Registration Successful', 'help.html', args);
+								displayTemplate(res, 'Registration Successful', 'intake.html', args);
 							});
 							break;
 						case 'bookmark-v1.1':
@@ -730,6 +731,39 @@ var server = http.createServer(function(req, res){
 							} else {
 								error(res, 'need articleInput and link_index to add article');
 							}
+							break;
+						case 'goal-intake-v1.2':
+							console.log("received goals: ", JSON.stringify(post_obj));
+							delete post_obj.form_id;
+							var arg_obj = {};
+							arg_obj.input_arr = Object.values(post_obj).filter(function (el) {
+	 						 return el != "";
+							});
+							receiveCookieData(req, function(err, cookie_obj){
+								if(err) return error(res, err);
+								if(!cookie_obj.hasOwnProperty('token_id')) return error(res, 'missing auth params');
+								if(!cookie_obj.hasOwnProperty('public_token')) return error(res, 'missing auth params');
+								var args = Object.assign(arg_obj, cookie_obj, { resource_id: 'r-mt/add-goal' });
+								intakeGoalInteractor(data, config, args, ext, function(err, confirm_args){
+									if(err) return error(res, err);
+									confirm_args.cookie_script = '';
+									confirm_args.Items = confirm_args.menu_items;
+									confirm_args.page_arr = new Array(confirm_args.link_pages).fill({a:1}).map((item, index)=>{ 
+										item = {};
+										item.active = '';
+										if((confirm_args.link_cursor-1)==index){
+											item.active = 'active'
+										}
+										item.index = index+1;
+										return item;
+									});
+									var sorted_links = confirm_args.link_arr.sort((a, b)=>{return a.priority-b.priority});
+									swapIdForName(data.name_data, sorted_links, function(err, swapped_data){
+										confirm_args.Objects = swapped_data;
+										displayTemplate(res, 'Goals added', 'home.html', confirm_args);
+									});
+								});
+							});
 							break;
 						default:
 							console.log(post_obj.form_id);
