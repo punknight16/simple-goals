@@ -151,7 +151,7 @@ body {
         <h1 class="h1">{{Title.sprint_id}}</h1>
         <div class="btn-toolbar mb-2 mb-md-0">
           <div class="btn-group mr-2">
-            <button type="button" class="btn btn-sm btn-outline-secondary">Close Sprint</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary" data-toggle="modal" data-target="#CloseSprintModal">Close Sprint</button>
             <button type="button" class="btn btn-sm btn-outline-secondary">Analyze Progress</button>
           </div>
           <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#ArticleModal"> Add Post
@@ -234,6 +234,29 @@ body {
         </div>
       </div>
     </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="CloseSprintModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Are you sure?</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form action='/home' method='post'>
+          
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            <input type='hidden' name="link_index" value='{{link_index}}' />
+            <input type='hidden' name="form_id" value='close-sprint-v1.2' />
+            <button type="submit" class="btn btn-primary">Close Sprint</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>  
 
   <!-- Modal -->
   <div class="modal fade" id="deactivateModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">

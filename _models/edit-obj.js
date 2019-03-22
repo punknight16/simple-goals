@@ -3,7 +3,7 @@ function editObj(data, params_obj, replace_obj){
 	var keys = Object.keys(params_obj);
 	var ans_arr = values.reduce((acc, value, index, arr)=>{
 		var filtered_arr = acc.filter((item)=>{
-			item.index = index;
+			console.log('INDEX: ', index);
 			return (item[keys[index]]==value);
 		});
 		return filtered_arr

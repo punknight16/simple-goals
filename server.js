@@ -21,6 +21,7 @@ var inspectSprintInteractor = require('./_scripts/inspect-sprint-interactor');
 var helpSprintInteractor = require('./_scripts/help-sprint-interactor');
 var openSprintInteractor = require('./_scripts/open-sprint-interactor');
 var addArticleInteractor = require('./_scripts/add-article-interactor');
+var closeSprintInteractor = require('./_scripts/close-sprint-interactor');
 
 var error = function(res, err_msg){
 	console.log(JSON.stringify(err_msg));
@@ -64,6 +65,7 @@ var data = {
 		{cred_id: 'cred-0vndq7krkn6o', resource_id:'r-mt/inspect-sprint', universal_id: 'cred-0vndq7krkn6o'},
 		{cred_id: 'cred-0vndq7krkn6o', resource_id:'r-mt/open-sprint', universal_id: 'cred-0vndq7krkn6o'},
 		{cred_id: 'cred-0vndq7krkn6o', resource_id:'r-mt/add-article', universal_id: 'cred-0vndq7krkn6o'},
+		{cred_id: 'cred-0vndq7krkn6o', resource_id:'r-mt/close-sprint', universal_id: 'cred-0vndq7krkn6o'},
 		{cred_id: 'cred-0vndq7krkn6o', resource_id:'r-mt/list-goal-obj', universal_id: 'public'},
 		{cred_id: 'cred-0vndq7krkn6o', resource_id:'r-mt/logout', universal_id: 'public'}
 	],
@@ -655,7 +657,7 @@ var server = http.createServer(function(req, res){
 							}
 							break;
 						case 'open-sprint-v1.2':
-							console.log('sprint data received: ', JSON.stringify(post_obj));
+							//console.log('sprint data received: ', JSON.stringify(post_obj));
 							if(post_obj.hasOwnProperty('link_index')){
 								receiveCookieData(req, function(err, cookie_obj){
 									if(err) return error(res, err);
@@ -675,7 +677,7 @@ var server = http.createServer(function(req, res){
 							}
 							break;
 						case 'add-article-v1.2':
-							console.log('post data: ', JSON.stringify(post_obj));
+							//console.log('post data: ', JSON.stringify(post_obj));
 							//create the article, a tag for each#, and update the sprint
 							if(post_obj.hasOwnProperty('articleInput') && post_obj.hasOwnProperty('link_index')){
 								//adding the article obj and updating the sprint_obj should be atomic
@@ -694,6 +696,37 @@ var server = http.createServer(function(req, res){
 								});
 								
 								
+							} else {
+								error(res, 'need articleInput and link_index to add article');
+							}
+							break;
+						case 'close-sprint-v1.2':
+							if(post_obj.hasOwnProperty('link_index')){
+								//adding the article obj and updating the sprint_obj should be atomic
+								receiveCookieData(req, function(err, cookie_obj){
+									if(err) return error(res, err);
+									if(!cookie_obj.hasOwnProperty('token_id')) return error(res, 'missing auth params');
+									if(!cookie_obj.hasOwnProperty('public_token')) return error(res, 'missing auth params');
+									var args = Object.assign(post_obj, cookie_obj, { resource_id: 'r-mt/close-sprint' });
+									closeSprintInteractor(data, config, args, ext, function(err, confirm_args){
+										if(err) return error(res, err);
+										confirm_args.Items = confirm_args.menu_items;
+										confirm_args.page_arr = new Array(confirm_args.link_pages).fill({a:1}).map((item, index)=>{ 
+											item = {};
+											item.active = '';
+											if((confirm_args.link_cursor-1)==index){
+												item.active = 'active'
+											}
+											item.index = index+1;
+											return item;
+										});
+										var sorted_links = confirm_args.link_arr.sort((a, b)=>{return a.priority-b.priority});
+										swapIdForName(data.name_data, sorted_links, function(err, swapped_data){
+											confirm_args.Objects = swapped_data;
+											displayTemplate(res, 'Sprint Closed', 'home.html', confirm_args);
+										});
+									});
+								});
 							} else {
 								error(res, 'need articleInput and link_index to add article');
 							}
