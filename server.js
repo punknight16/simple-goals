@@ -287,6 +287,10 @@ var server = http.createServer(function(req, res){
 			var stream = fs.createReadStream('./_pages/index.html');
 			stream.pipe(res);
 			break;
+		/*case 'sale':
+			var stream = fs.createReadStream('./_pages/sale.html');
+			stream.pipe(res);
+			break;*/
 		case 'register':
 			receiveCookieData(req, function(err, cookie_obj){
 				console.log('cookie_obj: ', cookie_obj);

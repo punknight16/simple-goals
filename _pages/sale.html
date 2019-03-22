@@ -1,0 +1,32 @@
+<html>
+<body></body>
+<script>
+function logPayment(amount, product) {
+    var form = document.createElement("form");
+    var element1 = document.createElement("input"); 
+    var element2 = document.createElement("input");
+    var element3 = document.createElement("input");  
+
+    form.method = "POST";
+    form.action = "/home";   
+
+    element1.value=amount;
+    element1.name="amount";
+    form.appendChild(element1);  
+
+    element2.value=product;
+    element2.name="product";
+    form.appendChild(element2);
+
+    element3.value='add-sale-v1.1';
+    element3.name="form_id";
+    form.appendChild(element3);
+
+    document.body.appendChild(form);
+
+    form.submit();
+}
+
+logPayment(5.00, 'root_user');
+</script>
+</html>
