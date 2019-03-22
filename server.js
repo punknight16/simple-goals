@@ -430,7 +430,10 @@ var server = http.createServer(function(req, res){
 					if(err) return error(res, err);
 					if(!cookie_obj.hasOwnProperty('token_id')) return error(res, 'missing auth params');
 					if(!cookie_obj.hasOwnProperty('public_token')) return error(res, 'missing auth params');
-					var args = Object.assign(cookie_obj, { resource_id: 'r-mt/get-home' });
+					if(typeof path[1] == 'undefined'){
+						path[1] = 'cursor=1';
+					};
+					var args = Object.assign(cookie_obj, {link_cursor: path[1].split('=')[1]}, { resource_id: 'r-mt/get-home'});
 					getHomeInteractor(data, config, args, ext, function(err, confirm_args){
 						if(err) return error(res, err);
 						confirm_args.Items = confirm_args.menu_items;
