@@ -69,7 +69,26 @@
 
 		<p>An application such as this starts to grow many heads in a trap known as "feature creep." I do not intend to fall into that trap... however. Although version 1.1 went live, it was missing many of the features that would prove whether it was successful or not. Most importantly, although I have laid the ground work for it, I am not tracking whether users are actually gaining value from the application. Thus, version 1.2 needs aws-s3 storage added, and a user page that tracks retention intensity of each user (total number of engagements/number of days since registration).</p>
 		
+		<strong>Version 1.3</strong>
 
+		<p>Version 1.2 of simple-goals is really coming into focus when it comes to CRUD-objects. We currently have "posts" that point to "sprints" that point to "goals". However, when it comes to the process of getting people to achieve their goals, the focus seems a little lacking. With this version, I want to get the process down, and incorporate the value added microservices that will make the app worth $$$.</p>
+
+		<p>As described in the "Introvert Entrepreneur" by Beth Buelow, in order to motivate people to really want a service, they need to know the "Why", so I think that is an important place to start with this process. Once the user realizes that they have a strong motivation, the next step is to research how other people are acheiving a similar goal. This means that my "browse" page needs to go from browsing "goals" to browsing "sprints" or some hybrid of the two, like clicking on a goal to view it's sprints. To really get this point to work, I need to work on a grouping algorithm that groups peoples posts into categories that can be associated with a group of goal names. For example, you should be able to search for "exercise" or "workout", and receive the same results.</p>
+
+		<p>The next phase in the process is developing a plan that has been normalized by the research that was done. For example, if you want to lose weight, and other people have tracked losing 1% bodyfat a month, it may be helpful to track bodyfat rather than weight loss. This also should be used to set reasonable goals.</p>
+
+		<p>The next phase is filling out the blog with your journal entries. These should be associated with a metric. To help people fill out their blog, the app will ask a few questions, with one click answers like ('How many hours a day did you spend on this?'), and ('Did you work on this daily, every other day, or once a week'), and finally, ('What time of day did you work on this?).</p>
+
+		<p>In the final phase, the collected information is used to show how your time is balanced between the five priority goals, and how augmenting one plan will effect the end results for all of the plans together. Suggestions can be made to put your most important goal in your most productive time slot, and see how that will affect everything.</p>
+
+		<p>Ok, so breaking that all down into routes</p>
+		<ul>
+			<li>/calender - https://fullcalendar.io/ with ML for moving_avg, skew_normal, and sin_reg</li>
+			<li>/add-post - edit to include the time, duration, and how often</li>
+			<li>/add-sprint - edit the plan title to be the why</li>
+			<li>/group-search - grouping algorithm</li>
+			<li>/group-plan - grouping algorithm</li>
+		</ul>
 
 		<h4>3. FAQ</h4>
 		<p><strong>Q:</strong> Trouble Logging in?<br />
