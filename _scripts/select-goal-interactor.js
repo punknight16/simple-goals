@@ -8,11 +8,11 @@ function selectGoalInteractor(data, config, args, ext, cb){
 		err = ext.addEngagementObj(data, config, args, ext);
 		if(err) return cb('failed to add engagement');
 		var menu_id = ext.getMenuIdFromPermission(data.permission_data, cred_id, ext.getPermissionObj, ext.getObj);
-		
 		if(typeof menu_id == 'undefined') return cb('couldn\'t get menu_id');
 		var menu_obj = ext.getMenuObj(data.menu_data, menu_id, ext.getObj);
 		if(typeof menu_obj == 'undefined' || !menu_obj.hasOwnProperty('menu_items')) return cb('couldn\'t get menu_items');
 		
+		console.log("args.link_arr: ", JSON.stringify(args.link_arr));
 		args.link_arr.map((link_obj)=>{
 			if(link_obj.isSelected=='true'){
 				var index = config.client_cache[cred_id].goal_arr.findIndex((item)=>{return (item.index==link_obj.index)})
@@ -24,11 +24,16 @@ function selectGoalInteractor(data, config, args, ext, cb){
 		});
 		
 		var link_arr = ext.checkoutLinkObj(data.link_data, cred_id, ext.checkoutObj)
+		console.log('updated link_arr: ', JSON.stringify(link_arr));
 		if(typeof args.link_cursor == 'undefined'){
 			args.link_cursor = 1;	
 		}
-		config.client_cache[cred_id].link_arr = link_arr.map((item, index)=>{item.index=index; return item});
+		//update the cache;
+		config.client_cache[cred_id].link_arr = link_arr;
 		config.client_cache[cred_id].link_pages = Math.ceil(link_arr.length/10);
+		if(typeof args.link_cursor == 'undefined'){
+			args.link_cursor = 1;	
+		}
 		config.client_cache[cred_id].link_cursor = args.link_cursor;
 		config.update_needed = true;
 		return cb(null, {
