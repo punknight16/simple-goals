@@ -3,6 +3,7 @@
   <script>{{{cookie_script}}}</script>
   <meta charset="utf-8">
   <script src="./build/react.min.js"></script>
+  
   <script src="./build/react-dom.min.js"></script>
   <script src="./build/browser.min.js"></script>
   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
@@ -262,7 +263,7 @@ body {
                 <tr class='border-top'>
                   <td>
                     <form class='mb-0' action='home' method='post'>
-                      <input type='hidden' name='sprint_id' value='s0' />
+                      <input type='hidden' name='index' value='{{index}}' />
                       <input type='hidden' name='form_id' value='inspect-sprint-v1.2' />
                       <input class='btn btn-link p-0' type='submit' value='{{goal_id}}' />
                     </form>
@@ -375,7 +376,11 @@ body {
   <script type='text/babel'>
     var App = React.createClass({
       getInitialState: function(){
-        var  check_arr = new Array({{Objects.length}}).fill("{className: 'custom-checkbox', checked: 'false'}")
+        //link cursor can = " ", 1, or 2
+        var link_cursor = Math.abs({{link_cursor}}-0);
+        if(link_cursor==0){ link_cursor = 1}
+        //now linked cursor can = 1, 1, 2
+        var  check_arr = new Array((link_cursor-1)*10+{{Objects.length}}).fill("{className: 'custom-checkbox', checked: 'false'}")
         return {check_arr: check_arr}
       },
       componentDidMount: function(){
@@ -464,6 +469,7 @@ body {
         this.setState({check_arr: check_arr});
       },
       render: function(){
+        console.log(JSON.stringify(this.state));
         return (
           <table className="table table-striped position-table">
             <thead>

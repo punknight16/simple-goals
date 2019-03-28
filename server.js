@@ -492,7 +492,7 @@ var server = http.createServer(function(req, res){
 							var link_arr = [];
 							keys.map((item, index)=>{
 								if(keys[index]!='form_id' && typeof keys[index] != 'undefined'){
-									link_arr.push({goal_id: keys[index], priority: values[index]});
+									link_arr.push({index: keys[index], priority: values[index]});
 								} 
 							});
 							receiveCookieData(req, function(err, cookie_obj){
