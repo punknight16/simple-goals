@@ -12,16 +12,32 @@ function prioritizeInteractor(data, config, args, ext, cb){
 		if(typeof menu_id == 'undefined') return cb('couldn\'t get menu_id');
 		var menu_obj = ext.getMenuObj(data.menu_data, menu_id, ext.getObj);
 		if(typeof menu_obj == 'undefined' || !menu_obj.hasOwnProperty('menu_items')) return cb('couldn\'t get menu_items');
-		//loop through the args, and update the cache;
+		
 		console.log("args.link_arr: ", JSON.stringify(args.link_arr));
-		args.link_arr.map((item, index)=>{
-			config.client_cache[cred_id].link_arr[item.index].priority = item.priority
+		//loop through the cache,
+		//add args.link_arr.length to index of everything that didn't change
+		//update index in the cache to new index for everything that did change;
+		Object.values(args.link_arr)
+		config.client_cache[cred_id].link_arr.map((item, index)=>{
+			var test = false;
+			args.link_arr.map((arg_obj)=>{
+				if(item.index == arg_obj.index){
+					test = true;
+					config.client_cache[cred_id].link_arr[item.index].priority = arg_obj.priority;
+					//console.log('change priority: ', JSON.stringify(config.client_cache[cred_id].link_arr[item.index]));
+				}
+			});
+			if(!test){
+				config.client_cache[cred_id].link_arr[item.index].priority = args.link_arr.length + parseInt(config.client_cache[cred_id].link_arr[item.index].priority);
+				//console.log('add priority: ', JSON.stringify(config.client_cache[cred_id].link_arr[item.index]))
+			} 
 		});
 
 		var sorted_links = config.client_cache[cred_id].link_arr.sort((a, b)=>{
 			return a.priority-b.priority
 		});
 
+		//console.log('sorted_links: ', JSON.stringify(sorted_links));
 		if(typeof args.link_cursor == 'undefined'){
 			args.link_cursor = 1;	
 		}
@@ -29,11 +45,11 @@ function prioritizeInteractor(data, config, args, ext, cb){
 		config.client_cache[cred_id].link_pages = Math.ceil(sorted_links.length/10);
 		config.client_cache[cred_id].link_cursor = args.link_cursor;
 		
-		console.log("updated_link_arr: ", JSON.stringify(config.client_cache[cred_id].link_arr));
+		//console.log("updated_link_arr: ", JSON.stringify(config.client_cache[cred_id].link_arr));
 		config.update_needed = true;
 		return cb(null, { 
 			menu_items: menu_obj.menu_items,
-			link_arr: config.client_cache[cred_id].link_arr.slice((args.link_cursor-1)*10, args.link_cursor*10),
+			link_arr: sorted_links.slice((args.link_cursor-1)*10, args.link_cursor*10),
 			link_pages: config.client_cache[cred_id].link_pages,
 			link_cursor: config.client_cache[cred_id].link_cursor
 		});

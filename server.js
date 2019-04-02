@@ -30,10 +30,10 @@ var error = function(res, err_msg){
 };
 
 var displayTemplate = function(res, msg, template=null, args={}){
-	console.log('args: ', args);
+	
 	var template_path = "./_templates/"+template;
 	var full_args = Object.assign(args, {msg: msg});
-	console.log("full_args: ", full_args);
+	
 	var stream = mu.compileAndRender(template_path, full_args);
 	stream.pipe(res);
 }
@@ -294,7 +294,7 @@ var server = http.createServer(function(req, res){
 			break;*/
 		case 'register':
 			receiveCookieData(req, function(err, cookie_obj){
-				console.log('cookie_obj: ', cookie_obj);
+				
 				if(err || cookie_obj.token_id=='null') {
 					var stream = fs.createReadStream('./_pages/register.html');
 					stream.pipe(res);		
@@ -413,7 +413,7 @@ var server = http.createServer(function(req, res){
 									item.index = index+1;
 									return item;
 								});
-								//console.log('confirm_args for search: ', confirm_args);
+								
 								var sorted_goals = confirm_args.goal_arr.sort((a, b)=>{return b.total_tags-a.total_tags});
 								swapIdForName(data.name_data, sorted_goals, function(err, swapped_data){
 									confirm_args.Objects = swapped_data;
@@ -447,7 +447,7 @@ var server = http.createServer(function(req, res){
 							item.index = index+1;
 							return item;
 						});
-						//console.log('confirm_args for getHomeInteractor: ', confirm_args);
+						
 						var sorted_links = confirm_args.link_arr.sort((a, b)=>{return a.priority-b.priority});
 						swapIdForName(data.name_data, sorted_links, function(err, swapped_data){
 							confirm_args.Objects = swapped_data;
@@ -488,11 +488,13 @@ var server = http.createServer(function(req, res){
 						case 'prioritize-v1.1':
 							var keys = Object.keys(post_obj);
 							var values = Object.values(post_obj);
-							//console.log(values);
+							
 							var link_arr = [];
 							keys.map((item, index)=>{
 								if(keys[index]!='form_id' && typeof keys[index] != 'undefined'){
-									link_arr.push({index: keys[index], priority: values[index]});
+									if(values[index]>=1 && values[index]<=5){
+										link_arr.push({index: parseInt(keys[index]), priority: parseInt(values[index])});	
+									}
 								} 
 							});
 							receiveCookieData(req, function(err, cookie_obj){
@@ -502,7 +504,7 @@ var server = http.createServer(function(req, res){
 								var args = Object.assign(post_obj, cookie_obj,{resource_id: 'r-mt/priortize-home', link_arr: link_arr});
 								prioritizeInteractor(data, config, args, ext, function(err, confirm_args){
 									if(err) return error(res, err);
-									//console.log(confirm_args.link_arr);
+									
 									confirm_args.cookie_script = '';
 									confirm_args.Items = confirm_args.menu_items;
 									confirm_args.page_arr = new Array(confirm_args.link_pages).fill({a:1}).map((item, index)=>{ 
@@ -538,7 +540,7 @@ var server = http.createServer(function(req, res){
 						case 'bookmark-v1.1':
 							var keys = Object.keys(post_obj);
 							var values = Object.values(post_obj);
-							//console.log(values);
+							
 							var link_arr = [];
 							keys.map((item, index)=>{
 								if(keys[index]!='form_id' && typeof keys[index] != 'undefined'){
@@ -564,7 +566,7 @@ var server = http.createServer(function(req, res){
 										item.index = index+1;
 										return item;
 									});
-									console.log('confirm_args for selectGoalsInteractor: ', confirm_args);
+									
 									var sorted_links = confirm_args.link_arr.sort((a, b)=>{return a.priority-b.priority});
 									swapIdForName(data.name_data, sorted_links, function(err, swapped_data){
 										confirm_args.Objects = swapped_data;
@@ -666,7 +668,7 @@ var server = http.createServer(function(req, res){
 							}
 							break;
 						case 'open-sprint-v1.2':
-							//console.log('sprint data received: ', JSON.stringify(post_obj));
+							
 							if(post_obj.hasOwnProperty('link_index')){
 								receiveCookieData(req, function(err, cookie_obj){
 									if(err) return error(res, err);
@@ -686,7 +688,7 @@ var server = http.createServer(function(req, res){
 							}
 							break;
 						case 'add-article-v1.2':
-							//console.log('post data: ', JSON.stringify(post_obj));
+							
 							//create the article, a tag for each#, and update the sprint
 							if(post_obj.hasOwnProperty('articleInput') && post_obj.hasOwnProperty('link_index')){
 								//adding the article obj and updating the sprint_obj should be atomic
@@ -741,7 +743,7 @@ var server = http.createServer(function(req, res){
 							}
 							break;
 						case 'goal-intake-v1.2':
-							console.log("received goals: ", JSON.stringify(post_obj));
+							
 							delete post_obj.form_id;
 							var arg_obj = {};
 							arg_obj.input_arr = Object.values(post_obj).filter(function (el) {
@@ -774,7 +776,7 @@ var server = http.createServer(function(req, res){
 							});
 							break;
 						default:
-							console.log(post_obj.form_id);
+							
 							error(res, 'can\'t find route to match form_id');
 					}
 				});
@@ -802,7 +804,7 @@ var server = http.createServer(function(req, res){
 						item.index = index+1;
 						return item;
 					});
-					console.log('confirm_args for getUserInteractor: ', confirm_args);
+					
 					var sorted_users = confirm_args.user_arr.sort((a, b)=>{return a.engagements_per_day-b.engagements_per_day});
 					swapIdForName(data.name_data, sorted_users, function(err, swapped_data){
 						confirm_args.Objects = swapped_data;
