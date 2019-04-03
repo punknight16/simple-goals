@@ -392,6 +392,15 @@ body {
           }
         }
       },
+      componentDidUpdate: function(){
+        var all = document.getElementsByTagName("input");
+
+        for (var i=0, max=all.length; i < max; i++) {
+          if(all[i].type=='submit'){
+            all[i].value = decodeURIComponent(all[i].value);  
+          }
+        }
+      },
       update: function(num){
         var check_arr = this.state.check_arr;
         var index1 = check_arr.findIndex((item)=>{
