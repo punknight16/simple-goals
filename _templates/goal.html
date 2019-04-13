@@ -321,7 +321,11 @@ body {
   </div>
   <script>
     function update(index){
-      document.getElementById(''+index).value='true';
+      if(document.getElementById(''+index).value == 'true'){
+        document.getElementById(''+index).value='false';  
+      } else {
+        document.getElementById(''+index).value='true';  
+      }
     }
     /**/
   </script>
