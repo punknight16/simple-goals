@@ -492,7 +492,7 @@ var server = http.createServer(function(req, res){
 							var link_arr = [];
 							keys.map((item, index)=>{
 								if(keys[index]!='form_id' && typeof keys[index] != 'undefined'){
-									if(values[index]>=1 && values[index]<=5){
+									if(values[index]>=1 && values[index]<=10){
 										link_arr.push({index: parseInt(keys[index]), priority: parseInt(values[index])});	
 									}
 								} 

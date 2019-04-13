@@ -9,18 +9,18 @@
   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-	<style>
-		#wrapper {
-			margin-top: 20px;
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+  <style>
+    #wrapper {
+      margin-top: 20px;
       display: flex;
       flex-direction: column;
-			/*
-			border: 1px solid gray;
-			border-radius: 3px;
-			padding: 3px;*/
-		}
-		html,
+      /*
+      border: 1px solid gray;
+      border-radius: 3px;
+      padding: 3px;*/
+    }
+    html,
 body {
   overflow-x: hidden; /* Prevent scroll on narrow devices */
 }
@@ -160,6 +160,22 @@ body {
   .custom-checkbox.fifth input[type="checkbox"]:checked + label:after {
     content: '5';
   }
+  .custom-checkbox.sixth input[type="checkbox"]:checked + label:after {
+    content: '6';
+  }
+  .custom-checkbox.seventh input[type="checkbox"]:checked + label:after {
+    content: '7';
+  }
+  .custom-checkbox.eigth input[type="checkbox"]:checked + label:after {
+    content: '8';
+  }
+  .custom-checkbox.ninth input[type="checkbox"]:checked + label:after {
+    content: '9';
+  }
+  .custom-checkbox.tenth input[type="checkbox"]:checked + label:after {
+    left: 1px;
+    content: '10';
+  }
   .custom-checkbox input[type="checkbox"]:checked + label:before {
     border-color: #007bff;
     background: #007bff;
@@ -194,7 +210,7 @@ body {
       color: #428BCA;
       text-decoration: underline;
   }
-	</style>
+  </style>
 </head>
 <body>
   <div class="cover-container d-flex h-100 p-0 mx-auto flex-column">
@@ -237,20 +253,20 @@ body {
     <main role="main" class="container mb-3">
 
       <div id="wrapper">
-      	<div class="d-flex align-items-center p-3 text-white-50 bg-purple rounded-top box-shadow">
-	        
-	        <div class="lh-100">
-	          <h6 class="mb-0 text-white lh-100">Your Goals</h6>
-	          <small>Manager</small>
-	        </div>
-	        <div class="ml-auto">
-	        	<button class="btn btn-success my-2 my-sm-0" type="submit"
+        <div class="d-flex align-items-center p-3 text-white-50 bg-purple rounded-top box-shadow">
+          
+          <div class="lh-100">
+            <h6 class="mb-0 text-white lh-100">Your Goals</h6>
+            <small>Manager</small>
+          </div>
+          <div class="ml-auto">
+            <button class="btn btn-success my-2 my-sm-0" type="submit"
             type="button" data-toggle="modal" data-target="#addModal"
             >Add Goal</button>
-	        </div>
-	      </div>
+          </div>
+        </div>
         <div id='table_body'>
-				  <table class="table table-striped">
+          <table class="table table-striped">
             <thead>
               <tr style="border-bottom: 2px solid #dee2e6">
                 <th class="border-bottom-0">Goal Name</th>
@@ -309,7 +325,7 @@ body {
               value ='Submit Priority' />
             </form>
         </div>
-			</div>
+      </div>
 
     </main>
 
@@ -381,7 +397,9 @@ body {
         if(link_cursor==0){ link_cursor = 1}
         //now linked cursor can = 1, 1, 2
         var  check_arr = new Array((link_cursor-1)*10+{{Objects.length}}).fill("{className: 'custom-checkbox', checked: 'false'}")
-        return {check_arr: check_arr}
+        return {
+          check_arr: check_arr
+        }
       },
       componentDidMount: function(){
         var all = document.getElementsByTagName("input");
@@ -401,81 +419,157 @@ body {
           }
         }
       },
-      update: function(num){
-        var check_arr = this.state.check_arr;
-        var index1 = check_arr.findIndex((item)=>{
-          return (item.className == 'custom-checkbox first')
-        });
-        var index2 = check_arr.findIndex((item)=>{
-          return (item.className == 'custom-checkbox second')
-        });
-        var index3 = check_arr.findIndex((item)=>{
-          return (item.className == 'custom-checkbox third')
-        });
-        var index4 = check_arr.findIndex((item)=>{
-          return (item.className == 'custom-checkbox fourth')
-        });
-        var index5 = check_arr.findIndex((item)=>{
-          return (item.className == 'custom-checkbox fifth')
-        });
-        if(!check_arr[num].checked){
-          if(index5 !=-1) {
-            console.log('index5: ', index5);
-            this.state.check_arr.map((item, index)=>{
-              document.getElementById('check'+index).click();  
-            });
-            document.getElementById('check'+num).click();
-            check_arr[num] = {className: 'custom-checkbox first', checked: true};
-            check_arr[index1] = {className: 'custom-checkbox', checked: false};
-            
-            check_arr[index2] = {className: 'custom-checkbox', checked: false};
-            check_arr[index3] = {className: 'custom-checkbox', checked: false};
-            check_arr[index4] = {className: 'custom-checkbox', checked: false};
-            check_arr[index5] = {className: 'custom-checkbox', checked: false};
-          } else if (index4 !=-1) {
-            console.log('index4: ', index4);
-            check_arr[num] = {className: 'custom-checkbox fifth', checked: true};
-          } else if (index3 !=-1) {
-            console.log('index3: ', index4);
-            check_arr[num] = {className: 'custom-checkbox fourth', checked: true};
-          } else if (index2 !=-1) {
-            console.log('index2: ', index2);
-            check_arr[num] = {className: 'custom-checkbox third', checked: true};
-          } else if (index1 !=-1) {
-            console.log('index1: ', index1);
-            check_arr[num] = {className: 'custom-checkbox second', checked: true};
+      update: function(e, num){
+       
+          var check_arr = this.state.check_arr;
+          var index1 = check_arr.findIndex((item)=>{
+            return (item.className == 'custom-checkbox first')
+          });
+          var index2 = check_arr.findIndex((item)=>{
+            return (item.className == 'custom-checkbox second')
+          });
+          var index3 = check_arr.findIndex((item)=>{
+            return (item.className == 'custom-checkbox third')
+          });
+          var index4 = check_arr.findIndex((item)=>{
+            return (item.className == 'custom-checkbox fourth')
+          });
+          var index5 = check_arr.findIndex((item)=>{
+            return (item.className == 'custom-checkbox fifth')
+          });
+          var index6 = check_arr.findIndex((item)=>{
+            return (item.className == 'custom-checkbox sixth')
+          });
+          var index7 = check_arr.findIndex((item)=>{
+            return (item.className == 'custom-checkbox seventh')
+          });
+          var index8 = check_arr.findIndex((item)=>{
+            return (item.className == 'custom-checkbox eigth')
+          });
+          var index9 = check_arr.findIndex((item)=>{
+            return (item.className == 'custom-checkbox ninth')
+          });
+          var index10 = check_arr.findIndex((item)=>{
+            return (item.className == 'custom-checkbox tenth')
+          });
+
+          if(!check_arr[num].checked){
+            console.log('hereA because adding a check');
+            if(index9 !=-1) {
+              console.log('index9: ', index9);
+              check_arr[num] = {className: 'custom-checkbox tenth', checked: true};
+            } else if(index8 !=-1) {
+              console.log('index8: ', index8);
+              check_arr[num] = {className: 'custom-checkbox ninth', checked: true};
+            } else if(index7 !=-1) {
+              console.log('index7: ', index7);
+              check_arr[num] = {className: 'custom-checkbox eigth', checked: true};
+            } else if(index6 !=-1) {
+              console.log('index6: ', index6);
+              check_arr[num] = {className: 'custom-checkbox seventh', checked: true};
+            } else if(index5 !=-1) {
+              console.log('index5: ', index5);
+              check_arr[num] = {className: 'custom-checkbox sixth', checked: true};
+            } else if (index4 !=-1) {
+              console.log('index4: ', index4);
+              check_arr[num] = {className: 'custom-checkbox fifth', checked: true};
+            } else if (index3 !=-1) {
+              console.log('index3: ', index4);
+              check_arr[num] = {className: 'custom-checkbox fourth', checked: true};
+            } else if (index2 !=-1) {
+              console.log('index2: ', index2);
+              check_arr[num] = {className: 'custom-checkbox third', checked: true};
+            } else if (index1 !=-1) {
+              console.log('index1: ', index1);
+              check_arr[num] = {className: 'custom-checkbox second', checked: true};
+            } else {
+              console.log('no index: ');
+              check_arr[num] = {className: 'custom-checkbox first', checked: true};
+            }
           } else {
-            console.log('no index: ');
-            check_arr[num] = {className: 'custom-checkbox first', checked: true};
+            console.log('hereB because removing a check');
+            switch(check_arr[num].className){
+              case 'custom-checkbox first':
+                check_arr[index1] = {className: 'custom-checkbox', checked: false};
+                check_arr[index2] = {className: 'custom-checkbox first', checked: true};
+                check_arr[index3] = {className: 'custom-checkbox second', checked: true};
+                check_arr[index4] = {className: 'custom-checkbox third', checked: true};
+                check_arr[index5] = {className: 'custom-checkbox fourth', checked: true};
+
+                check_arr[index6] = {className: 'custom-checkbox fifth', checked: true};
+                check_arr[index7] = {className: 'custom-checkbox sixth', checked: true};
+                check_arr[index8] = {className: 'custom-checkbox seventh', checked: true};
+                check_arr[index9] = {className: 'custom-checkbox eigth', checked: true};
+                check_arr[index10] = {className: 'custom-checkbox ninth', checked: true};
+                break;
+              case 'custom-checkbox second':
+                check_arr[index2] = {className: 'custom-checkbox', checked: false};
+                check_arr[index3] = {className: 'custom-checkbox second', checked: true};
+                check_arr[index4] = {className: 'custom-checkbox third', checked: true};
+                check_arr[index5] = {className: 'custom-checkbox fourth', checked: true};
+                check_arr[index6] = {className: 'custom-checkbox fifth', checked: true};
+                check_arr[index7] = {className: 'custom-checkbox sixth', checked: true};
+                check_arr[index8] = {className: 'custom-checkbox seventh', checked: true};
+                check_arr[index9] = {className: 'custom-checkbox eigth', checked: true};
+                check_arr[index10] = {className: 'custom-checkbox ninth', checked: true};
+                break;
+              case 'custom-checkbox third':
+                check_arr[index3] = {className: 'custom-checkbox', checked: false};
+                check_arr[index4] = {className: 'custom-checkbox third', checked: true};
+                check_arr[index5] = {className: 'custom-checkbox fourth', checked: true};
+                check_arr[index6] = {className: 'custom-checkbox fifth', checked: true};
+                check_arr[index7] = {className: 'custom-checkbox sixth', checked: true};
+                check_arr[index8] = {className: 'custom-checkbox seventh', checked: true};
+                check_arr[index9] = {className: 'custom-checkbox eigth', checked: true};
+                check_arr[index10] = {className: 'custom-checkbox ninth', checked: true};
+                break;
+              case 'custom-checkbox fourth':
+                check_arr[index4] = {className: 'custom-checkbox', checked: false};
+                check_arr[index5] = {className: 'custom-checkbox fourth', checked: true};
+                check_arr[index6] = {className: 'custom-checkbox fifth', checked: true};
+                check_arr[index7] = {className: 'custom-checkbox sixth', checked: true};
+                check_arr[index8] = {className: 'custom-checkbox seventh', checked: true};
+                check_arr[index9] = {className: 'custom-checkbox eigth', checked: true};
+                check_arr[index10] = {className: 'custom-checkbox ninth', checked: true};
+                break;
+              case 'custom-checkbox fifth':
+                check_arr[index5] = {className: 'custom-checkbox', checked: false};
+                check_arr[index6] = {className: 'custom-checkbox fifth', checked: true};
+                check_arr[index7] = {className: 'custom-checkbox sixth', checked: true};
+                check_arr[index8] = {className: 'custom-checkbox seventh', checked: true};
+                check_arr[index9] = {className: 'custom-checkbox eigth', checked: true};
+                check_arr[index10] = {className: 'custom-checkbox ninth', checked: true};
+                break;
+              case 'custom-checkbox sixth':
+                check_arr[index6] = {className: 'custom-checkbox', checked: false};
+                check_arr[index7] = {className: 'custom-checkbox sixth', checked: true};
+                check_arr[index8] = {className: 'custom-checkbox seventh', checked: true};
+                check_arr[index9] = {className: 'custom-checkbox eigth', checked: true};
+                check_arr[index10] = {className: 'custom-checkbox ninth', checked: true};
+                break;
+              case 'custom-checkbox seventh':
+                check_arr[index7] = {className: 'custom-checkbox', checked: false};
+                check_arr[index8] = {className: 'custom-checkbox seventh', checked: true};
+                check_arr[index9] = {className: 'custom-checkbox eigth', checked: true};
+                check_arr[index10] = {className: 'custom-checkbox ninth', checked: true};
+                break;
+              case 'custom-checkbox eigth':
+                check_arr[index8] = {className: 'custom-checkbox', checked: false};
+                check_arr[index9] = {className: 'custom-checkbox eigth', checked: true};
+                check_arr[index10] = {className: 'custom-checkbox ninth', checked: true};
+                break;
+              case 'custom-checkbox ninth':
+                check_arr[index9] = {className: 'custom-checkbox', checked: false};
+                check_arr[index10] = {className: 'custom-checkbox ninth', checked: true};
+                break;
+              case 'custom-checkbox tenth':
+                check_arr[index10] = {className: 'custom-checkbox', checked: false};
+                break;
+            } 
           }
-        } else {
-          switch(check_arr[num].className){
-            case 'custom-checkbox first':
-              check_arr[index1] = {className: 'custom-checkbox', checked: false};
-              check_arr[index2] = {className: 'custom-checkbox first', checked: true};
-              check_arr[index3] = {className: 'custom-checkbox second', checked: true};
-              check_arr[index4] = {className: 'custom-checkbox third', checked: true};
-              check_arr[index5] = {className: 'custom-checkbox fourth', checked: true};
-              break;
-            case 'custom-checkbox second':
-              check_arr[index2] = {className: 'custom-checkbox', checked: false};
-              check_arr[index3] = {className: 'custom-checkbox second', checked: true};
-              check_arr[index4] = {className: 'custom-checkbox third', checked: true};
-              check_arr[index5] = {className: 'custom-checkbox fourth', checked: true};
-              break;
-            case 'custom-checkbox third':
-              check_arr[index3] = {className: 'custom-checkbox', checked: false};
-              check_arr[index4] = {className: 'custom-checkbox third', checked: true};
-              check_arr[index5] = {className: 'custom-checkbox fourth', checked: true};
-              break;
-            case 'custom-checkbox fourth':
-              check_arr[index4] = {className: 'custom-checkbox', checked: false};
-              check_arr[index5] = {className: 'custom-checkbox fourth', checked: true};
-              break;
-          } 
-        }
-        setHiddenForm(check_arr);
-        this.setState({check_arr: check_arr});
+          setHiddenForm(check_arr);
+          this.setState({check_arr: check_arr});
+        
       },
       render: function(){
         console.log(JSON.stringify(this.state));
@@ -501,7 +595,9 @@ body {
                   <td></td>
                   <td className="d-flex justify-content-end border-top-0">
                     <span className={this.state.check_arr[{{index}}].className || 'custom-checkbox'}>
-                      <input id='check{{index}}' type="checkbox" onClick={(e)=>this.update({{index}})}/>
+                      <input key='"{{index}}"' id='check{{index}}' type="checkbox" onClick={(e)=>{
+                        this.update(e, {{index}});
+                      }}/>
                       <label className="mb-0"></label>
                     </span>
                   </td>
@@ -532,6 +628,21 @@ body {
             break;
           case 'custom-checkbox fifth':
             document.getElementById(index).value = 5;
+            break;
+          case 'custom-checkbox sixth':
+            document.getElementById(index).value = 6;
+            break;
+          case 'custom-checkbox seventh':
+            document.getElementById(index).value = 7;
+            break; 
+          case 'custom-checkbox eigth':
+            document.getElementById(index).value = 8;
+            break;
+          case 'custom-checkbox ninth':
+            document.getElementById(index).value = 9;
+            break;
+          case 'custom-checkbox tenth':
+            document.getElementById(index).value = 10;
             break;
         }
       });
